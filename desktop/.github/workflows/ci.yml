@@ -1,0 +1,45 @@
+# Namnet på workflow som syns i GitHub Actions
+name: CI
+
+# När workflow ska köras
+on:
+  push:
+    branches: [ main ]          # Kör när man pushar till main
+  pull_request:
+    branches: [ main ]          # Kör även när någon öppnar en PR mot main
+
+jobs:
+  build:                        # Jobbet heter "build"
+    runs-on: ubuntu-latest      # Kör på GitHubs senaste Ubuntu-image
+
+    steps:
+      # Hämtar källkoden från repot
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Sätter upp Node.js i rätt version (20) och cache:ar npm-moduler
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Installerar alla dependencies från package-lock.json
+      - name: Install dependencies
+        run: npm ci
+
+      # Kör TypeScript type-check (om scriptet finns i package.json)
+      - name: Type check
+        run: npm run typecheck --if-present
+
+      # Kör lint (om scriptet finns i package.json)
+      - name: Lint
+        run: npm run lint --if-present
+
+      # Kör tester (om scriptet finns i package.json)
+      - name: Run tests
+        run: npm test --if-present
+
+      # Bygger projektet för produktion
+      - name: Build
+        run: npm run build
