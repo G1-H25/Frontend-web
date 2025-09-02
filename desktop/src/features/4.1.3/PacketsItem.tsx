@@ -9,7 +9,7 @@ type PacketProps = {
 
 const PacketsItem = ({ bil, chauffor, paketnr, temp, hamtat, lamnat }: PacketProps) => {
   return (
-    <tr className="bg-[#D9F2FF] text-[#2782E2] text-center hover:bg-[#2782E2] hover:text-white transition-colors">
+    <tr className="table-row table-row-hover">
   <td className="p-2">{bil}</td>
   <td className="p-2">{chauffor}</td>
   <td className="p-2">{paketnr}</td>

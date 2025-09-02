@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@layer components {
+  .table-row {
+    @apply bg-[#D9F2FF] text-[#2782E2] text-center transition-colors;
+  }
+
+  .table-row-hover:hover {
+    @apply bg-[#2782E2] text-white;
+  }
+}
