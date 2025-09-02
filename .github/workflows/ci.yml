@@ -3,8 +3,7 @@ name: CI
 
 # När workflow ska köras
 on:
-  push:
-    branches: [ main ]          # Kör när man pushar till main
+  push:        
   pull_request:
     branches: [ main ]          # Kör även när någon öppnar en PR mot main
 
