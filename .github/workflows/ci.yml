@@ -3,9 +3,13 @@ name: CI
 
 # När workflow ska köras
 on:
-  push:        
+  push:
+    branches: 
+      - "*"         # alla brancher
   pull_request:
-    branches: [ main ]          # Kör även när någon öppnar en PR mot main
+    branches: 
+      - main
+         # Kör även när någon öppnar en PR mot main
 
 jobs:
   build:                        # Jobbet heter "build"
