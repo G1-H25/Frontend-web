@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "eslint 'src/**/*.{ts,tsx,js,jsx}'",
+    "preview": "vite preview",
+    "build:css": "postcss src/input.css -o dist/output.css",
+    "type-check": "tsc --noEmit",
+    "test": "echo \"No tests yet\" && exit 0"
   },
   "dependencies": {
     "react": "^19.1.1",
