@@ -38,11 +38,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Build
+      - name: Build (TypeScript + Vite + Tailwind)
         run: npm run build
-
-      - name: Tailwind build
-        run: npm run build:css
 
       # - name: Run tests (uncomment when you have them)
       #   run: npm test
