@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom"
 import MainLayout from "./layouts/MainLayout"
 import Landing from "./pages/Landing"
-import Packets from "./features/4.1.3/Packets"
+import Packets from "./pages/Packets"
 import About from "./pages/About"
 
 function App() {

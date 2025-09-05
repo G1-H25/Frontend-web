@@ -1,4 +1,4 @@
-import PacketsList from "./PacketsList"
+import PacketsList from "../features/4.1.3/PacketsList"
 
 const Packets = () => {
   return (
