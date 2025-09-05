@@ -2,17 +2,106 @@ import PacketsItem from "./PacketsItem"
 
 const PacketsList = () => {
   const packets = [
-  { bil: "Volvo", chauffor: "Anna", paketnr: "123", temp: "5°C", hamtat: "08:30", lamnat: "09:15" },
-  { bil: "Scania", chauffor: "Björn", paketnr: "456", temp: "4°C", hamtat: "09:00", lamnat: "09:45" },
-  { bil: "Mercedes", chauffor: "Clara", paketnr: "789", temp: "6°C", hamtat: "08:45", lamnat: "09:30" },
-  { bil: "Volvo", chauffor: "David", paketnr: "321", temp: "5°C", hamtat: "09:15", lamnat: "10:00" },
-  { bil: "Scania", chauffor: "Emma", paketnr: "654", temp: "3°C", hamtat: "09:30", lamnat: "10:15" },
-  { bil: "MAN", chauffor: "Fredrik", paketnr: "987", temp: "4°C", hamtat: "10:00", lamnat: "10:45" },
-  { bil: "Volvo", chauffor: "Greta", paketnr: "147", temp: "5°C", hamtat: "10:15", lamnat: "11:00" },
-  { bil: "Scania", chauffor: "Hanna", paketnr: "258", temp: "6°C", hamtat: "10:30", lamnat: "11:15" },
-  { bil: "Mercedes", chauffor: "Isak", paketnr: "369", temp: "4°C", hamtat: "10:45", lamnat: "11:30" },
-  { bil: "MAN", chauffor: "Johanna", paketnr: "741", temp: "5°C", hamtat: "11:00", lamnat: "11:45" },
-]
+  {
+    rutt: "Stockholm → Uppsala",
+    sändningsnr: "123456",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 5,
+    status: { text: "Order skapad", timestamp: "08:30" },
+  },
+  {
+    rutt: "Göteborg → Borås",
+    sändningsnr: "654321",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 9,
+    status: { text: "Lastad på bil", timestamp: "09:15" },
+  },
+  {
+    rutt: "Stockholm → Norrtälje",
+    sändningsnr: "121212",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 5,
+    status: { text: "Levererad", timestamp: "11:30" },
+  },
+  {
+    rutt: "Malmö → Lund",
+    sändningsnr: "111111",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 4,
+    status: { text: "Order skapad", timestamp: "08:00" },
+  },
+  {
+    rutt: "Umeå → Skellefteå",
+    sändningsnr: "222222",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 6,
+    status: { text: "Lastad på bil", timestamp: "08:30" },
+  },
+  {
+    rutt: "Örebro → Västerås",
+    sändningsnr: "333333",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 3,
+    status: { text: "Order skapad", timestamp: "09:00" },
+  },
+  {
+    rutt: "Göteborg → Kungsbacka",
+    sändningsnr: "131313",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 6,
+    status: { text: "Levererad", timestamp: "12:00" },
+  },
+  {
+    rutt: "Helsingborg → Ängelholm",
+    sändningsnr: "444444",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 7,
+    status: { text: "Lastad på bil", timestamp: "09:15" },
+  },
+  {
+    rutt: "Karlstad → Filipstad",
+    sändningsnr: "555555",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 5,
+    status: { text: "Order skapad", timestamp: "09:30" },
+  },
+  {
+    rutt: "Linköping → Norrköping",
+    sändningsnr: "666666",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 2,
+    status: { text: "Lastad på bil", timestamp: "10:00" },
+  },
+  {
+    rutt: "Jönköping → Värnamo",
+    sändningsnr: "777777",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 8,
+    status: { text: "Order skapad", timestamp: "10:15" },
+  },
+  {
+    rutt: "Gävle → Sandviken",
+    sändningsnr: "888888",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 6,
+    status: { text: "Lastad på bil", timestamp: "10:30" },
+  },
+  {
+    rutt: "Borås → Alingsås",
+    sändningsnr: "999999",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 10, // utanför intervallet
+    status: { text: "Order skapad", timestamp: "10:45" },
+  },
+  {
+    rutt: "Sundsvall → Härnösand",
+    sändningsnr: "101010",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 5,
+    status: { text: "Lastad på bil", timestamp: "11:00" },
+  },
+];
+
 
 
   return (
@@ -22,12 +111,11 @@ const PacketsList = () => {
       <table className="w-full border-separate border-spacing-y-2">
         <thead>
           <tr>
-            <th className="text-center text-[#2782E2] px-4 py-2">Bil</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Chaufför</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Paketnr</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Temp</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Hämtat kl</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Lämnat kl</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Rutt</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Sändningsnr</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Förväntad temp</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Nuvarande temp</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -41,3 +129,5 @@ const PacketsList = () => {
 }
 
 export default PacketsList
+
+

@@ -1,24 +1,27 @@
 type PacketProps = {
-  bil: string
-  chauffor: string
-  paketnr: string
-  temp: string
-  hamtat: string
-  lamnat: string
-}
+  rutt: string;
+  sändningsnr: string;
+  expectedTemp: { min: number; max: number };
+  currentTemp: number;
+  status: { text: string; timestamp: string };
+};
 
-const PacketsItem = ({ bil, chauffor, paketnr, temp, hamtat, lamnat }: PacketProps) => {
+
+const PacketsItem = ({ rutt, sändningsnr, expectedTemp, currentTemp, status }: PacketProps) => {
+  const isTempOutOfRange = currentTemp < expectedTemp.min || currentTemp > expectedTemp.max;
+
   return (
-    <tr className="table-row table-row-hover">
-      <td className="p-2">{bil}</td>
-      <td className="p-2">{chauffor}</td>
-      <td className="p-2">{paketnr}</td>
-      <td className="p-2">{temp}</td>
-      <td className="p-2">{hamtat}</td>
-      <td className="p-2">{lamnat}</td>
+    <tr className={isTempOutOfRange ? "table-row-warning table-row-warning:hover" : "table-row table-row-hover"}>
+      <td className="p-2">{rutt}</td>
+      <td className="p-2">{sändningsnr}</td>
+      <td className="p-2">{`${expectedTemp.min}–${expectedTemp.max}°C`}</td>
+      <td className="p-2">{currentTemp}°C</td>
+      <td className="p-2">{`${status.text} (${status.timestamp})`}</td>
     </tr>
+  );
+};
 
-  )
-}
 
 export default PacketsItem
+
+
