@@ -1,0 +1,58 @@
+name: CI – TypeScript, Tailwind, Lint, Delete branch
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+jobs:
+  setup-and-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./desktop
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: desktop/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('desktop/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build (TypeScript + Vite + Tailwind)
+        run: npm run build
+
+      # - name: Run tests (uncomment when you have them)
+      #   run: npm test
+
+  delete-branch:
+    needs: setup-and-build
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete merged branch
+        run: |
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          echo "Deleting branch '$BRANCH' from remote"
+          git push origin --delete "$BRANCH"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
