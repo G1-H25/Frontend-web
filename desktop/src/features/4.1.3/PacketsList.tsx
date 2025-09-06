@@ -115,7 +115,7 @@ const PacketsList = () => {
   {
     rutt: "Göteborg",
     sändningsnr: "202020",
-    expectedTemp: { min: 0, max: 5 },
+    expectedTemp: { min: 2, max: 8 },
     currentTemp: 3.2,           // ligger nu inom intervallet
     minTempMeasured: -1.0,      // tidigare under min
     maxTempMeasured: 6.5,       // tidigare över max
