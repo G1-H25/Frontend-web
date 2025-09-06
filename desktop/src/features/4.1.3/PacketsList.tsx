@@ -6,103 +6,153 @@ const PacketsList = () => {
     rutt: "Stockholm",
     sändningsnr: "123456",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 5,
+    currentTemp: 5.0,
+    minTempMeasured: 4.8,
+    maxTempMeasured: 6.1,
+    timeOutsideRange: 0,
     status: { text: "Order skapad", timestamp: "08:30" },
   },
   {
     rutt: "Göteborg",
     sändningsnr: "654321",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 9,
+    currentTemp: 9.1,
+    minTempMeasured: 4.2,
+    maxTempMeasured: 9.1,
+    timeOutsideRange: 12,
     status: { text: "Lastad på bil", timestamp: "09:15" },
   },
   {
     rutt: "Stockholm",
     sändningsnr: "121212",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 5,
+    currentTemp: 5.0,
+    minTempMeasured: 4.7,
+    maxTempMeasured: 6.3,
+    timeOutsideRange: 0,
     status: { text: "Levererad", timestamp: "11:30" },
   },
   {
     rutt: "Malmö",
     sändningsnr: "111111",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 4,
+    currentTemp: 4.0,
+    minTempMeasured: 3.2,
+    maxTempMeasured: 5.1,
+    timeOutsideRange: 0,
     status: { text: "Order skapad", timestamp: "08:00" },
   },
   {
     rutt: "Umeå",
     sändningsnr: "222222",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 6,
+    currentTemp: 6.4,
+    minTempMeasured: 5.0,
+    maxTempMeasured: 7.2,
+    timeOutsideRange: 0,
     status: { text: "Lastad på bil", timestamp: "08:30" },
   },
   {
     rutt: "Örebro",
     sändningsnr: "333333",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 3,
+    currentTemp: 3.2,
+    minTempMeasured: 2.8,
+    maxTempMeasured: 5.4,
+    timeOutsideRange: 0,
     status: { text: "Order skapad", timestamp: "09:00" },
   },
   {
     rutt: "Göteborg",
     sändningsnr: "131313",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 6,
+    currentTemp: 6.8,
+    minTempMeasured: 4.9,
+    maxTempMeasured: 7.4,
+    timeOutsideRange: 0,
     status: { text: "Levererad", timestamp: "12:00" },
   },
   {
     rutt: "Helsingborg",
     sändningsnr: "444444",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 7,
+    currentTemp: 7.3,
+    minTempMeasured: 5.5,
+    maxTempMeasured: 7.9,
+    timeOutsideRange: 0,
     status: { text: "Lastad på bil", timestamp: "09:15" },
   },
   {
     rutt: "Karlstad",
     sändningsnr: "555555",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 5,
+    currentTemp: 5.0,
+    minTempMeasured: 3.9,
+    maxTempMeasured: 5.8,
+    timeOutsideRange: 0,
     status: { text: "Order skapad", timestamp: "09:30" },
   },
   {
     rutt: "Linköping",
     sändningsnr: "666666",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 2,
+    currentTemp: 2.0,
+    minTempMeasured: 2.0,
+    maxTempMeasured: 2.5,
+    timeOutsideRange: 0,
     status: { text: "Lastad på bil", timestamp: "10:00" },
   },
   {
     rutt: "Jönköping",
     sändningsnr: "777777",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 8,
+    currentTemp: 8.0,
+    minTempMeasured: 6.2,
+    maxTempMeasured: 8.0,
+    timeOutsideRange: 0,
     status: { text: "Order skapad", timestamp: "10:15" },
+  },
+  {
+    rutt: "Göteborg",
+    sändningsnr: "202020",
+    expectedTemp: { min: 0, max: 5 },
+    currentTemp: 3.2,           // ligger nu inom intervallet
+    minTempMeasured: -1.0,      // tidigare under min
+    maxTempMeasured: 6.5,       // tidigare över max
+    timeOutsideRange: 12,       // minuter utanför intervallet
+    status: { text: "Temperatur åter inom intervallet", timestamp: "12:15" }
   },
   {
     rutt: "Gävle",
     sändningsnr: "888888",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 6,
+    currentTemp: 6.0,
+    minTempMeasured: 5.1,
+    maxTempMeasured: 6.7,
+    timeOutsideRange: 0,
     status: { text: "Lastad på bil", timestamp: "10:30" },
   },
   {
     rutt: "Borås",
     sändningsnr: "999999",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 10, // utanför intervallet
+    currentTemp: 9.0,
+    minTempMeasured: 4.6,
+    maxTempMeasured: 10.2,
+    timeOutsideRange: 25,
     status: { text: "Order skapad", timestamp: "10:45" },
   },
   {
     rutt: "Sundsvall",
     sändningsnr: "101010",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 5,
+    currentTemp: 5.5,
+    minTempMeasured: 3.9,
+    maxTempMeasured: 6.7,
+    timeOutsideRange: 0,
     status: { text: "Lastad på bil", timestamp: "11:00" },
   },
 ];
-
-
 
 
   return (
@@ -114,9 +164,11 @@ const PacketsList = () => {
           <tr>
             <th className="text-center text-[#2782E2] px-4 py-2">Rutt</th>
             <th className="text-center text-[#2782E2] px-4 py-2">Sändningsnr</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Förväntad temp</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Nuvarande temp</th>
             <th className="text-center text-[#2782E2] px-4 py-2">Status</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Nuvarande temp</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Förväntad temp</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Mätt min/max</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Avvikande tid</th>
           </tr>
         </thead>
         <tbody>
@@ -130,5 +182,4 @@ const PacketsList = () => {
 }
 
 export default PacketsList
-
 

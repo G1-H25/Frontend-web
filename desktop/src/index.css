@@ -21,4 +21,12 @@
     @apply bg-[#CC0000] cursor-pointer;
   }
 
+  .table-row-warning-past {
+    @apply bg-[#D9F2FF] text-[#FF0000] border border-red-500 text-center transition-colors;
+  }
+
+  .table-row-warning-past:hover {
+    @apply bg-[#2782E2] cursor-pointer;
+  }
+
 }
