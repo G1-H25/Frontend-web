@@ -154,6 +154,20 @@ const PacketsList = () => {
   },
 ];
 
+  // sorteringslogik
+  const sortedPackets = [...packets].sort((a, b) => {
+    const aOutNow = a.currentTemp < a.expectedTemp.min || a.currentTemp > a.expectedTemp.max;
+    const bOutNow = b.currentTemp < b.expectedTemp.min || b.currentTemp > b.expectedTemp.max;
+
+    if (aOutNow !== bOutNow) return aOutNow ? -1 : 1;
+
+    const aWasOut = a.timeOutsideRange > 0;
+    const bWasOut = b.timeOutsideRange > 0;
+
+    if (aWasOut !== bWasOut) return aWasOut ? -1 : 1;
+
+    return a.rutt.localeCompare(b.rutt, "sv"); // A–Ö sortering på rutt
+  });
 
   return (
     <div className="p-4 border border-[#9ACEFE] bg-white">
@@ -172,7 +186,7 @@ const PacketsList = () => {
           </tr>
         </thead>
         <tbody>
-          {packets.map((p, index) => (
+          {sortedPackets.map((p, index) => (
             <PacketsItem key={index} {...p} />
           ))}
         </tbody>
