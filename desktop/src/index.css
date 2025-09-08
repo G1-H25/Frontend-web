@@ -1,11 +1,32 @@
 @import "tailwindcss";
 
 @layer components {
+  .table-header-row {
+    @apply text-center text-[#2782E2] px-4 py-2;
+  }
+
   .table-row {
     @apply bg-[#D9F2FF] text-[#2782E2] text-center transition-colors;
   }
 
-  .table-row-hover:hover {
-    @apply bg-[#2782E2] text-white;
+    .table-row-hover:hover {
+    @apply bg-[#2782E2] text-white cursor-pointer;
   }
+
+  .table-row-warning {
+    @apply bg-[#FF0000] text-white text-center transition-colors;
+  }
+
+  .table-row-warning:hover {
+    @apply bg-[#CC0000] cursor-pointer;
+  }
+
+  .table-row-warning-past {
+    @apply bg-[#D9F2FF] text-[#FF0000] border border-red-500 text-center transition-colors;
+  }
+
+  .table-row-warning-past:hover {
+    @apply bg-[#2782E2] text-black cursor-pointer;
+  }
+
 }

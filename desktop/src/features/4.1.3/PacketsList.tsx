@@ -2,18 +2,172 @@ import PacketsItem from "./PacketsItem"
 
 const PacketsList = () => {
   const packets = [
-  { bil: "Volvo", chauffor: "Anna", paketnr: "123", temp: "5°C", hamtat: "08:30", lamnat: "09:15" },
-  { bil: "Scania", chauffor: "Björn", paketnr: "456", temp: "4°C", hamtat: "09:00", lamnat: "09:45" },
-  { bil: "Mercedes", chauffor: "Clara", paketnr: "789", temp: "6°C", hamtat: "08:45", lamnat: "09:30" },
-  { bil: "Volvo", chauffor: "David", paketnr: "321", temp: "5°C", hamtat: "09:15", lamnat: "10:00" },
-  { bil: "Scania", chauffor: "Emma", paketnr: "654", temp: "3°C", hamtat: "09:30", lamnat: "10:15" },
-  { bil: "MAN", chauffor: "Fredrik", paketnr: "987", temp: "4°C", hamtat: "10:00", lamnat: "10:45" },
-  { bil: "Volvo", chauffor: "Greta", paketnr: "147", temp: "5°C", hamtat: "10:15", lamnat: "11:00" },
-  { bil: "Scania", chauffor: "Hanna", paketnr: "258", temp: "6°C", hamtat: "10:30", lamnat: "11:15" },
-  { bil: "Mercedes", chauffor: "Isak", paketnr: "369", temp: "4°C", hamtat: "10:45", lamnat: "11:30" },
-  { bil: "MAN", chauffor: "Johanna", paketnr: "741", temp: "5°C", hamtat: "11:00", lamnat: "11:45" },
-]
+  {
+    rutt: "Stockholm",
+    sändningsnr: "123456",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 5.0,
+    minTempMeasured: 4.8,
+    maxTempMeasured: 6.1,
+    timeOutsideRange: 0,
+    status: { text: "Order skapad", timestamp: "08:30" },
+  },
+  {
+    rutt: "Göteborg",
+    sändningsnr: "654321",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 9.1,
+    minTempMeasured: 4.2,
+    maxTempMeasured: 9.1,
+    timeOutsideRange: 12,
+    status: { text: "Lastad på bil", timestamp: "09:15" },
+  },
+  {
+    rutt: "Stockholm",
+    sändningsnr: "121212",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 5.0,
+    minTempMeasured: 4.7,
+    maxTempMeasured: 6.3,
+    timeOutsideRange: 0,
+    status: { text: "Levererad", timestamp: "11:30" },
+  },
+  {
+    rutt: "Malmö",
+    sändningsnr: "111111",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 4.0,
+    minTempMeasured: 3.2,
+    maxTempMeasured: 5.1,
+    timeOutsideRange: 0,
+    status: { text: "Order skapad", timestamp: "08:00" },
+  },
+  {
+    rutt: "Umeå",
+    sändningsnr: "222222",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 6.4,
+    minTempMeasured: 5.0,
+    maxTempMeasured: 7.2,
+    timeOutsideRange: 0,
+    status: { text: "Lastad på bil", timestamp: "08:30" },
+  },
+  {
+    rutt: "Örebro",
+    sändningsnr: "333333",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 3.2,
+    minTempMeasured: 2.8,
+    maxTempMeasured: 5.4,
+    timeOutsideRange: 0,
+    status: { text: "Order skapad", timestamp: "09:00" },
+  },
+  {
+    rutt: "Göteborg",
+    sändningsnr: "131313",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 6.8,
+    minTempMeasured: 4.9,
+    maxTempMeasured: 7.4,
+    timeOutsideRange: 0,
+    status: { text: "Levererad", timestamp: "12:00" },
+  },
+  {
+    rutt: "Helsingborg",
+    sändningsnr: "444444",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 7.3,
+    minTempMeasured: 5.5,
+    maxTempMeasured: 7.9,
+    timeOutsideRange: 0,
+    status: { text: "Lastad på bil", timestamp: "09:15" },
+  },
+  {
+    rutt: "Karlstad",
+    sändningsnr: "555555",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 5.0,
+    minTempMeasured: 3.9,
+    maxTempMeasured: 5.8,
+    timeOutsideRange: 0,
+    status: { text: "Order skapad", timestamp: "09:30" },
+  },
+  {
+    rutt: "Linköping",
+    sändningsnr: "666666",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 2.0,
+    minTempMeasured: 2.0,
+    maxTempMeasured: 2.5,
+    timeOutsideRange: 0,
+    status: { text: "Lastad på bil", timestamp: "10:00" },
+  },
+  {
+    rutt: "Jönköping",
+    sändningsnr: "777777",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 8.0,
+    minTempMeasured: 6.2,
+    maxTempMeasured: 8.0,
+    timeOutsideRange: 0,
+    status: { text: "Order skapad", timestamp: "10:15" },
+  },
+  {
+    rutt: "Göteborg",
+    sändningsnr: "202020",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 3.2,           
+    minTempMeasured: -1.0,     
+    maxTempMeasured: 6.5,       
+    timeOutsideRange: 12,       
+    status: { text: "Åter inom intervallet", timestamp: "12:15" }
+  },
+  {
+    rutt: "Gävle",
+    sändningsnr: "888888",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 6.0,
+    minTempMeasured: 5.1,
+    maxTempMeasured: 6.7,
+    timeOutsideRange: 0,
+    status: { text: "Lastad på bil", timestamp: "10:30" },
+  },
+  {
+    rutt: "Borås",
+    sändningsnr: "999999",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 9.0,
+    minTempMeasured: 4.6,
+    maxTempMeasured: 10.2,
+    timeOutsideRange: 25,
+    status: { text: "Order skapad", timestamp: "10:45" },
+  },
+  {
+    rutt: "Sundsvall",
+    sändningsnr: "101010",
+    expectedTemp: { min: 2, max: 8 },
+    currentTemp: 5.5,
+    minTempMeasured: 3.9,
+    maxTempMeasured: 6.7,
+    timeOutsideRange: 0,
+    status: { text: "Lastad på bil", timestamp: "11:00" },
+  },
+];
 
+  // sorteringslogik
+  const sortedPackets = [...packets].sort((a, b) => {
+    const aOutNow = a.currentTemp < a.expectedTemp.min || a.currentTemp > a.expectedTemp.max;
+    const bOutNow = b.currentTemp < b.expectedTemp.min || b.currentTemp > b.expectedTemp.max;
+
+    if (aOutNow !== bOutNow) return aOutNow ? -1 : 1;
+
+    const aWasOut = a.timeOutsideRange > 0;
+    const bWasOut = b.timeOutsideRange > 0;
+
+    if (aWasOut !== bWasOut) return aWasOut ? -1 : 1;
+
+    return a.rutt.localeCompare(b.rutt, "sv"); // A–Ö sortering på rutt
+  });
 
   return (
     <div className="p-4 border border-[#9ACEFE] bg-white">
@@ -22,16 +176,17 @@ const PacketsList = () => {
       <table className="w-full border-separate border-spacing-y-2">
         <thead>
           <tr>
-            <th className="text-center text-[#2782E2] px-4 py-2">Bil</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Chaufför</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Paketnr</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Temp</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Hämtat kl</th>
-            <th className="text-center text-[#2782E2] px-4 py-2">Lämnat kl</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Rutt</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Sändningsnr</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Status</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Nuvarande temp</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Förväntad temp</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Mätt min/max</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Avvikande tid</th>
           </tr>
         </thead>
         <tbody>
-          {packets.map((p, index) => (
+          {sortedPackets.map((p, index) => (
             <PacketsItem key={index} {...p} />
           ))}
         </tbody>
