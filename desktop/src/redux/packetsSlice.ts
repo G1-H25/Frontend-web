@@ -62,12 +62,13 @@ export const selectSortedPackets = (state: RootState) => {
 
     // 3. Sortering A–Ö eller Ö–A på valt fält
     if (sortField) {
-      const aVal = (a as any)[sortField];
-      const bVal = (b as any)[sortField];
+  const aVal: Packet[keyof Packet] = a[sortField];
+  const bVal: Packet[keyof Packet] = b[sortField];
 
-      if (aVal < bVal) return sortAsc ? -1 : 1;
-      if (aVal > bVal) return sortAsc ? 1 : -1;
-    }
+  if (aVal < bVal) return sortAsc ? -1 : 1;
+  if (aVal > bVal) return sortAsc ? 1 : -1;
+}
+
     return 0;
   });
 };
