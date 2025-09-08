@@ -7,9 +7,20 @@ type PacketProps = {
   maxTempMeasured: number;
   timeOutsideRange: number; // minuter
   status: { text: string; timestamp: string };
+  onClick?: () => void;
 };
 
-const PacketsItem = ({ rutt, sändningsnr, expectedTemp, currentTemp, minTempMeasured, maxTempMeasured, timeOutsideRange, status }: PacketProps) => {
+const PacketsItem = ({
+  rutt,
+  sändningsnr,
+  expectedTemp,
+  currentTemp,
+  minTempMeasured,
+  maxTempMeasured,
+  timeOutsideRange,
+  status,
+  onClick,
+}: PacketProps) => {
   // To be able to adjust the color depending on the status
   let rowClass = "table-row table-row-hover";
 
@@ -20,7 +31,7 @@ const PacketsItem = ({ rutt, sändningsnr, expectedTemp, currentTemp, minTempMea
   }
 
   return (
-    <tr className={rowClass}>
+    <tr className={rowClass + " cursor-pointer"} onClick={onClick}>
       <td className="p-2">{rutt}</td>
       <td className="p-2">{sändningsnr}</td>
       <td className="p-2">{`${status.text} (${status.timestamp})`}</td>
@@ -32,4 +43,4 @@ const PacketsItem = ({ rutt, sändningsnr, expectedTemp, currentTemp, minTempMea
   );
 };
 
-export default PacketsItem
+export default PacketsItem;
