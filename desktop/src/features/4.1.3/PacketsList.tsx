@@ -120,7 +120,7 @@ const PacketsList = () => {
     minTempMeasured: -1.0,      // tidigare under min
     maxTempMeasured: 6.5,       // tidigare över max
     timeOutsideRange: 12,       // minuter utanför intervallet
-    status: { text: "Temperatur åter inom intervallet", timestamp: "12:15" }
+    status: { text: "Åter inom intervallet", timestamp: "12:15" }
   },
   {
     rutt: "Gävle",
