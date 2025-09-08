@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PacketsItem from "./PacketsItem";
 
 const exampleHistory = [
@@ -9,6 +9,7 @@ const exampleHistory = [
 
 const PacketsList = () => {
   const [selectedPacket, setSelectedPacket] = useState<any | null>(null);
+  const [showPanel, setShowPanel] = useState(false);
 
   const packets = [
     {
@@ -178,6 +179,15 @@ const PacketsList = () => {
     return a.rutt.localeCompare(b.rutt, "sv"); // A–Ö sortering på rutt
   });
 
+  useEffect(() => {
+    if (selectedPacket) {
+      // Start animation on next tick
+      setTimeout(() => setShowPanel(true), 10);
+    } else {
+      setShowPanel(false);
+    }
+  }, [selectedPacket]);
+
   return (
     <div className="relative">
       <div className="p-4 border border-[#9ACEFE] bg-white">
@@ -209,7 +219,12 @@ const PacketsList = () => {
       {/* Popup panel */}
       {selectedPacket && (
         <div
-          className="fixed top-1/2 right-0 translate-y-[-50%] w-[30vw] min-w-[300px] max-w-[400px] h-[70vh] bg-white shadow-2xl border-l border-[#9ACEFE] z-50 p-6 flex flex-col rounded-l-2xl transition-transform duration-300 ease-out"
+          className={`
+            fixed top-1/2 right-0 translate-y-[-50%] w-[30vw] min-w-[300px] max-w-[400px] h-[70vh]
+            bg-white shadow-2xl border-l border-[#9ACEFE] z-50 p-6 flex flex-col rounded-l-2xl
+            transition-transform duration-700 ease-out
+            ${showPanel ? "translate-x-0" : "translate-x-full"}
+          `}
           style={{ boxShadow: "0 8px 32px rgba(39,130,226,0.12)" }}
         >
           <button
@@ -218,9 +233,16 @@ const PacketsList = () => {
           >
             Stäng ✕
           </button>
-          <h2 className="text-lg font-bold text-[#2782E2] mb-4">
-            Historik för {selectedPacket.sändningsnr}
+          <h2 className="text-lg font-bold text-[#2782E2] mb-2">
+            Paketinformation
           </h2>
+          <div className="mb-4 text-sm text-gray-700">
+            <div><span className="font-semibold">Rutt:</span> {selectedPacket.rutt}</div>
+            <div><span className="font-semibold">Sändningsnr:</span> {selectedPacket.sändningsnr}</div>
+          </div>
+          <h3 className="text-md font-bold text-[#2782E2] mb-2">
+            Historik
+          </h3>
           <ul className="space-y-3 overflow-y-auto">
             {(selectedPacket.history || exampleHistory).map((h: any, i: number) => (
               <li key={i} className="border-b pb-2 flex items-center">
