@@ -21,7 +21,7 @@ const PacketsList = () => {
     rutt: "GOT",
     sändningsnr: "654321",
     expectedTemp: { min: 2, max: 8 },
-    currentTemp: 9.1,
+    currentTemp: 7.1,
     minTempMeasured: 4.2,
     maxTempMeasured: 9.1,
     expectedHumidity: { min: 30, max: 70 },
@@ -165,7 +165,7 @@ const PacketsList = () => {
     minTempMeasured: -1.0,
     maxTempMeasured: 6.5,
     expectedHumidity: { min: 30, max: 70 },
-    currentHumidity: 72,
+    currentHumidity: 69,
     minHumidityMeasured: 28,
     maxHumidityMeasured: 72,
     timeOutsideRange: 12,
@@ -233,13 +233,17 @@ const PacketsList = () => {
   });
 
   useTempAlarmNotification(
-    packets.map((p) => ({
-      sändningsnr: p.sändningsnr,
-      currentTemp: p.currentTemp,
-      expectedMin: p.expectedTemp.min,
-      expectedMax: p.expectedTemp.max,
-    }))
-  );
+  packets.map((p) => ({
+    sändningsnr: p.sändningsnr,
+    currentTemp: p.currentTemp,
+    expectedTempMin: p.expectedTemp.min,
+    expectedTempMax: p.expectedTemp.max,
+    currentHumidity: p.currentHumidity,
+    expectedHumidityMin: p.expectedHumidity.min,
+    expectedHumidityMax: p.expectedHumidity.max,
+  }))
+);
+
 
   return (
     <div className="p-4 border border-[#9ACEFE] bg-white">

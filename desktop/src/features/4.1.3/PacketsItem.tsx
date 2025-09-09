@@ -30,11 +30,15 @@ const PacketsItem = ({
   // To be able to adjust the color depending on the status
   let rowClass = "table-row table-row-hover";
 
-  if (currentTemp < expectedTemp.min || currentTemp > expectedTemp.max) {
+  const outOfTemp = currentTemp < expectedTemp.min || currentTemp > expectedTemp.max;
+  const outOfHumidity = currentHumidity < expectedHumidity.min || currentHumidity > expectedHumidity.max;
+
+  if (outOfTemp || outOfHumidity) {
     rowClass = "table-row-warning table-row-warning:hover"; // Outside range
   } else if (timeOutsideRange > 0) {
     rowClass = "table-row-warning-past table-row-warning-past:hover"; // Previous outside range
   }
+
 
   return (
     <tr className={rowClass}>
