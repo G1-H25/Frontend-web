@@ -12,6 +12,10 @@ type Packet = {
   currentTemp: number;
   minTempMeasured: number;
   maxTempMeasured: number;
+  expectedHumidity: { min: number; max: number };
+  currentHumidity: number;                       
+  minHumidityMeasured: number;                   
+  maxHumidityMeasured: number;                   
   timeOutsideRange: number;
   status: Status;
 };
@@ -62,12 +66,12 @@ export const selectSortedPackets = (state: RootState) => {
 
     // 3. Sortering A–Ö eller Ö–A på valt fält
     if (sortField) {
-  const aVal: Packet[keyof Packet] = a[sortField];
-  const bVal: Packet[keyof Packet] = b[sortField];
+      const aVal: Packet[keyof Packet] = a[sortField];
+      const bVal: Packet[keyof Packet] = b[sortField];
 
-  if (aVal < bVal) return sortAsc ? -1 : 1;
-  if (aVal > bVal) return sortAsc ? 1 : -1;
-}
+      if (aVal < bVal) return sortAsc ? -1 : 1;
+      if (aVal > bVal) return sortAsc ? 1 : -1;
+    }
 
     return 0;
   });
