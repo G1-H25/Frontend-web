@@ -102,7 +102,7 @@ const PacketsList = () => {
     status: { text: "Levererad", timestamp: "12:00" },
   },
   {
-    rutt: "HEL",
+    rutt: "HBG",
     sändningsnr: "444444",
     expectedTemp: { min: 2, max: 8 },
     currentTemp: 7.3,
@@ -130,7 +130,7 @@ const PacketsList = () => {
     status: { text: "Skapad", timestamp: "09:30" },
   },
   {
-    rutt: "LPI",
+    rutt: "LKG",
     sändningsnr: "666666",
     expectedTemp: { min: 2, max: 8 },
     currentTemp: 2.0,
@@ -144,7 +144,7 @@ const PacketsList = () => {
     status: { text: "Lastad", timestamp: "10:00" },
   },
   {
-    rutt: "JKP",
+    rutt: "JKG",
     sändningsnr: "777777",
     expectedTemp: { min: 2, max: 8 },
     currentTemp: 8.0,
@@ -186,7 +186,7 @@ const PacketsList = () => {
     status: { text: "Lastad", timestamp: "10:30" },
   },
   {
-    rutt: "BOR",
+    rutt: "BLG",
     sändningsnr: "999999",
     expectedTemp: { min: 2, max: 8 },
     currentTemp: 9.0,
