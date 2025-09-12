@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch } from "../../app/store";
-import { fetchPackets, selectSortedPackets } from "../../redux/packetsSlice";
+import type { AppDispatch } from "../app/store";
+import { fetchPackets, selectSortedPackets } from "../redux/packetsSlice";
 import PacketsItem from "./PacketsItem";
-import useTempAlarmNotification from "../../hooks/useTempAlarmNotification";
+import useTempAlarmNotification from "../hooks/useTempAlarmNotification";
 
 const PacketsList = () => {
   const dispatch = useDispatch<AppDispatch>();

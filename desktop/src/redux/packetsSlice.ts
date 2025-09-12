@@ -10,28 +10,7 @@ export const fetchPackets = createAsyncThunk(
     if (!response.ok) throw new Error("Failed to fetch packets");
     const data = await response.json();
 
-    // Mappa API-data till vår interna Packet-typ
-    return data.map((p: any) => ({
-      id: p.OrderId.toString(),
-      rutt: p.RouteCode,
-      sändningsnr: p.Sändningsnr.toString(),
-      expectedTemp: {
-        min: parseFloat(p.ExpectedTempMin),
-        max: parseFloat(p.ExpectedTempMax),
-      },
-      currentTemp: parseFloat(p.CurrentTemp),
-      minTempMeasured: parseFloat(p.ExpectedTempMin),
-      maxTempMeasured: parseFloat(p.ExpectedTempMax),
-      expectedHumidity: {
-        min: parseFloat(p.ExpectedHumidityMin),
-        max: parseFloat(p.ExpectedHumidityMax),
-      },
-      currentHumidity: p.CurrentHumidity,
-      minHumidityMeasured: parseFloat(p.ExpectedHumidityMin),
-      maxHumidityMeasured: parseFloat(p.ExpectedHumidityMax),
-      timeOutsideRange: p.TimeOutsideRange,
-      status: { text: p.Status, timestamp: p.StatusTime },
-    }));
+    return data as Packet[];
   }
 );
 
