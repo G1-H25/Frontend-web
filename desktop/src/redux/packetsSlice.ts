@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createSelector, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../app/store";
 
 // Async thunk för att hämta paket från API
@@ -9,8 +8,7 @@ export const fetchPackets = createAsyncThunk(
     const response = await fetch("http://localhost:3000/orders");
     if (!response.ok) throw new Error("Failed to fetch packets");
     const data = await response.json();
-
-    return data as Packet[];
+    return data as ApiPacket[];
   }
 );
 
@@ -32,6 +30,12 @@ type Packet = {
   status: Status;
   sender: string;
   transport: string;
+};
+
+// Typ som matchar API-svaret
+type ApiPacket = Omit<Packet, "sender" | "transport"> & {
+  sender: { name: string };
+  transport: { name: string };
 };
 
 interface PacketsState {
@@ -60,48 +64,44 @@ const initialState: PacketsState = {
   },
 };
 
-
 const packetsSlice = createSlice({
   name: "packets",
   initialState,
   reducers: {
-  setPackets(state, action: PayloadAction<Packet[]>) {
-    state.items = action.payload;
+    setPackets(state, action: PayloadAction<Packet[]>) {
+      state.items = action.payload;
+    },
+    setSortField(state, action: PayloadAction<keyof Packet>) {
+      if (state.sortField === action.payload) {
+        state.sortAsc = !state.sortAsc;
+      } else {
+        state.sortField = action.payload;
+        state.sortAsc = true;
+      }
+    },
+    setFilterArray(
+      state,
+      action: PayloadAction<{ field: "rutt" | "status" | "sender" | "transport"; values: string[] }>
+    ) {
+      state.filters[action.payload.field] = action.payload.values;
+    },
+    setFilterBoolean(
+      state,
+      action: PayloadAction<{ field: "timeOutsideRange"; value: boolean }>
+    ) {
+      state.filters[action.payload.field] = action.payload.value;
+    },
   },
-  setSortField(state, action: PayloadAction<keyof Packet>) {
-    if (state.sortField === action.payload) {
-      state.sortAsc = !state.sortAsc;
-    } else {
-      state.sortField = action.payload;
-      state.sortAsc = true;
-    }
-  },
-  setFilterArray(
-    state,
-    action: PayloadAction<{ field: "rutt" | "status" | "sender" | "transport"; values: string[] }>
-  ) {
-    state.filters[action.payload.field] = action.payload.values;
-  },
-  setFilterBoolean(
-    state,
-    action: PayloadAction<{ field: "timeOutsideRange"; value: boolean }>
-  ) {
-    state.filters[action.payload.field] = action.payload.value;
-  },
-
-}
-,
   extraReducers: (builder) => {
-  builder.addCase(fetchPackets.fulfilled, (state, action: PayloadAction<any[]>) => {
-    // Mappa om sender och transport till string direkt
-    state.items = action.payload.map(p => ({
-      ...p,
-      sender: p.sender.name,
-      transport: p.transport.name,
-    })) as Packet[];
-  });
-},
-
+    builder.addCase(fetchPackets.fulfilled, (state, action: PayloadAction<ApiPacket[]>) => {
+      // Mappa sender/transport till string direkt
+      state.items = action.payload.map(p => ({
+        ...p,
+        sender: p.sender.name,
+        transport: p.transport.name,
+      }));
+    });
+  },
 });
 
 export const selectSortedPackets = createSelector(
@@ -112,34 +112,23 @@ export const selectSortedPackets = createSelector(
   (items, sortField, sortAsc, filters) => {
     let filtered = [...items];
 
-    // Filtrera rutt
     if (filters.rutt.length > 0) {
       filtered = filtered.filter(p => filters.rutt.includes(p.rutt));
     }
-
-    // Filtrera status
     if (filters.status.length > 0) {
       filtered = filtered.filter(p => filters.status.includes(p.status.text));
     }
-
-    // Filtrera sender
     if (filters.sender.length > 0) {
-      filtered = filtered.filter(p => filters.sender.includes((p as any).sender));
+      filtered = filtered.filter(p => filters.sender.includes(p.sender));
     }
-
-    // Filtrera transport
     if (filters.transport.length > 0) {
-      filtered = filtered.filter(p => filters.transport.includes((p as any).transport));
+      filtered = filtered.filter(p => filters.transport.includes(p.transport));
     }
-
-    // Filtrera historiska larm
     if (filters.timeOutsideRange) {
       filtered = filtered.filter(p => p.timeOutsideRange > 0);
     }
 
-    // Sortering
     return filtered.sort((a, b) => {
-      // 1. Aktiva larm (temp eller fuktighet utanför intervallet)
       const aOut =
         a.currentTemp < a.expectedTemp.min ||
         a.currentTemp > a.expectedTemp.max ||
@@ -154,12 +143,10 @@ export const selectSortedPackets = createSelector(
 
       if (aOut !== bOut) return aOut ? -1 : 1;
 
-      // 2. Historiska larm (timeOutsideRange > 0)
       const aHistory = a.timeOutsideRange > 0;
       const bHistory = b.timeOutsideRange > 0;
       if (aHistory !== bHistory) return aHistory ? -1 : 1;
 
-      // 3. Valfri sortering (fält om angivet)
       if (sortField) {
         const aVal = a[sortField];
         const bVal = b[sortField];
@@ -168,7 +155,6 @@ export const selectSortedPackets = createSelector(
         if (aVal > bVal) return sortAsc ? 1 : -1;
       }
 
-      // 4. Default sortering på rutt + status
       const ruttCmp = a.rutt.localeCompare(b.rutt, "sv");
       if (ruttCmp !== 0) return ruttCmp;
 
@@ -176,8 +162,6 @@ export const selectSortedPackets = createSelector(
     });
   }
 );
-
-
 
 export const { setPackets, setSortField, setFilterArray, setFilterBoolean } = packetsSlice.actions;
 export default packetsSlice.reducer;
