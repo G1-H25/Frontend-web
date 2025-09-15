@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, ChevronUp, Check } from "lucide-react";
 
 export type Option = {
@@ -21,8 +21,8 @@ export default function FilterDropdown({
 }: FilterDropdownProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<(string | number)[]>(selectedProp);
+  const timerRef = useRef<number | null>(null);
 
-  // Synkronisera state när parent ändrar selected
   useEffect(() => {
     setSelected(selectedProp);
   }, [selectedProp]);
@@ -35,8 +35,26 @@ export default function FilterDropdown({
     onChange?.(newSelected);
   };
 
+  const handleMouseEnter = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const handleMouseLeave = () => {
+    timerRef.current = setTimeout(() => {
+      setOpen(false);
+      timerRef.current = null;
+    }, 2000); // 2 sekunder
+  };
+
   return (
-    <div className="relative inline-block w-full max-w-sm">
+    <div
+      className="relative inline-block w-full max-w-sm"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Filterknapp */}
       <button
         onClick={() => setOpen(!open)}
