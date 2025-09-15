@@ -46,7 +46,7 @@ export default function FilterDropdown({
     timerRef.current = setTimeout(() => {
       setOpen(false);
       timerRef.current = null;
-    }, 2000); // 2 sekunder
+    }, 500); // half a second
   };
 
   return (
@@ -58,11 +58,17 @@ export default function FilterDropdown({
       {/* Filterknapp */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-2 rounded-lg text-white font-medium bg-[#2782E2] hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer border border-[#2782E2] transition active:scale-95"
+        className={`w-full flex items-center justify-between px-4 py-2 rounded-lg font-medium border transition active:scale-95
+          ${
+            selected.length > 0
+              ? "bg-[#D9F2FF] text-[#2782E2] border-[#2782E2]" // filter är aktivt
+              : "bg-[#2782E2] text-white border-[#2782E2] hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
+          }`}
       >
         {label}
         {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
       </button>
+
 
       {/* Dropdown-panel */}
       {open && (
