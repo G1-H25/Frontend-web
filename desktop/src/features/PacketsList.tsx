@@ -34,6 +34,16 @@ const PacketsList = () => {
   );
 
   // Skapa filteralternativ från alla paket
+  const sender: Option[] = [...new Set(allPackets.map((p) => p.sender))].map((s) => ({
+    value: s,
+    label: s, 
+  }));
+
+  const transport: Option[] = [...new Set(allPackets.map((p) => p.transport))].map((t) => ({
+    value: t,
+    label: t,
+  }));
+
   const routes: Option[] = [...new Set(allPackets.map((p) => p.rutt))].map((r) => ({
     value: r,
     label: r,
@@ -45,7 +55,7 @@ const PacketsList = () => {
   }));
 
   // Hantera filterändring
-  const handleFilterChange = (field: "rutt" | "status", values: string[]) => {
+  const handleFilterChange = (field: "rutt" | "status" | "sender" | "transport", values: string[]) => {
     dispatch(setFilterArray({ field, values }));
   };
 
@@ -71,6 +81,18 @@ const PacketsList = () => {
       {/* Filterdropdowns */}
       <div className="mb-4 flex gap-4 flex-row">
         <FilterDropdown
+          label="Avsändare"
+          options={sender}
+          selected={filters.sender}
+          onChange={(vals) => handleFilterChange("sender", vals as string[])}
+        />
+        <FilterDropdown
+          label="Transport"
+          options={transport}
+          selected={filters.transport}
+          onChange={(vals) => handleFilterChange("transport", vals as string[])}
+        />
+        <FilterDropdown
           label="Rutt"
           options={routes}
           selected={filters.rutt}
@@ -90,6 +112,8 @@ const PacketsList = () => {
       <table className="w-full border-separate border-spacing-y-2">
         <thead>
           <tr>
+            <th className="text-center text-[#2782E2] px-4 py-2">Avsändare</th>
+            <th className="text-center text-[#2782E2] px-4 py-2">Transport</th>
             <th className="text-center text-[#2782E2] px-4 py-2">Rutt</th>
             <th className="text-center text-[#2782E2] px-4 py-2">Sändningsnr</th>
             <th className="text-center text-[#2782E2] px-4 py-2">Status</th>

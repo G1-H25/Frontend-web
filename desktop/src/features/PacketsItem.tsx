@@ -11,6 +11,8 @@ type PacketProps = {
   maxHumidityMeasured: number;                   
   timeOutsideRange: number; // minuter
   status: { text: string; timestamp: string };
+  sender: string;
+  transport: string;
 };
 
 const PacketsItem = ({ 
@@ -26,6 +28,8 @@ const PacketsItem = ({
   maxHumidityMeasured,
   timeOutsideRange,
   status,
+  sender,
+  transport
 }: PacketProps) => {
   // To be able to adjust the color depending on the status
   let rowClass = "table-row table-row-hover";
@@ -42,6 +46,8 @@ const PacketsItem = ({
 
   return (
     <tr className={rowClass}>
+      <td className="p-2">{sender}</td>
+      <td className="p-2">{transport}</td>
       <td className="p-2">{rutt}</td>
       <td className="p-2">{sändningsnr}</td>
       <td className="p-2">{status.text} ({new Date(status.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</td>

@@ -30,6 +30,8 @@ type Packet = {
   maxHumidityMeasured: number;
   timeOutsideRange: number;
   status: Status;
+  sender: string;
+  transport: string;
 };
 
 interface PacketsState {
@@ -90,10 +92,16 @@ const packetsSlice = createSlice({
 }
 ,
   extraReducers: (builder) => {
-    builder.addCase(fetchPackets.fulfilled, (state, action: PayloadAction<Packet[]>) => {
-      state.items = action.payload;
-    });
-  },
+  builder.addCase(fetchPackets.fulfilled, (state, action: PayloadAction<any[]>) => {
+    // Mappa om sender och transport till string direkt
+    state.items = action.payload.map(p => ({
+      ...p,
+      sender: p.sender.name,
+      transport: p.transport.name,
+    })) as Packet[];
+  });
+},
+
 });
 
 export const selectSortedPackets = createSelector(
@@ -114,22 +122,44 @@ export const selectSortedPackets = createSelector(
       filtered = filtered.filter(p => filters.status.includes(p.status.text));
     }
 
-    // Filtrera om paketet varit utanför intervallet
+    // Filtrera sender
+    if (filters.sender.length > 0) {
+      filtered = filtered.filter(p => filters.sender.includes((p as any).sender));
+    }
+
+    // Filtrera transport
+    if (filters.transport.length > 0) {
+      filtered = filtered.filter(p => filters.transport.includes((p as any).transport));
+    }
+
+    // Filtrera historiska larm
     if (filters.timeOutsideRange) {
       filtered = filtered.filter(p => p.timeOutsideRange > 0);
     }
 
-
-    // Sortering (samma som tidigare)
+    // Sortering
     return filtered.sort((a, b) => {
-      const aOut = a.currentTemp < a.expectedTemp.min || a.currentTemp > a.expectedTemp.max;
-      const bOut = b.currentTemp < b.expectedTemp.min || b.currentTemp > b.expectedTemp.max;
+      // 1. Aktiva larm (temp eller fuktighet utanför intervallet)
+      const aOut =
+        a.currentTemp < a.expectedTemp.min ||
+        a.currentTemp > a.expectedTemp.max ||
+        a.currentHumidity < a.expectedHumidity.min ||
+        a.currentHumidity > a.expectedHumidity.max;
+
+      const bOut =
+        b.currentTemp < b.expectedTemp.min ||
+        b.currentTemp > b.expectedTemp.max ||
+        b.currentHumidity < b.expectedHumidity.min ||
+        b.currentHumidity > b.expectedHumidity.max;
+
       if (aOut !== bOut) return aOut ? -1 : 1;
 
+      // 2. Historiska larm (timeOutsideRange > 0)
       const aHistory = a.timeOutsideRange > 0;
       const bHistory = b.timeOutsideRange > 0;
       if (aHistory !== bHistory) return aHistory ? -1 : 1;
 
+      // 3. Valfri sortering (fält om angivet)
       if (sortField) {
         const aVal = a[sortField];
         const bVal = b[sortField];
@@ -138,10 +168,15 @@ export const selectSortedPackets = createSelector(
         if (aVal > bVal) return sortAsc ? 1 : -1;
       }
 
-      return a.rutt.localeCompare(b.rutt, "sv");
+      // 4. Default sortering på rutt + status
+      const ruttCmp = a.rutt.localeCompare(b.rutt, "sv");
+      if (ruttCmp !== 0) return ruttCmp;
+
+      return a.status.text.localeCompare(b.status.text, "sv");
     });
   }
 );
+
 
 
 export const { setPackets, setSortField, setFilterArray, setFilterBoolean } = packetsSlice.actions;
