@@ -3,7 +3,7 @@ name: CI – TypeScript, Tailwind, Lint, Delete branch
 on:
   pull_request:
     branches: [develop, main]
-    types: [opened, synchronize, reopened] # bygg ska köras vid "vanliga" PR-event
+    types: [opened, synchronize, reopened, closed] # bygg ska köras vid "vanliga" PR-event
   push:
     branches: [develop, main]
   workflow_dispatch: # så ni kan köra manuellt om ni vill
@@ -46,14 +46,3 @@ jobs:
       # - name: Run tests (uncomment when you have them)
       #   run: npm test
 
-  delete-branch:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete merged branch
-        run: |
-          BRANCH="${{ github.event.pull_request.head.ref }}"
-          echo "Deleting branch '$BRANCH' from remote"
-          git push origin --delete "$BRANCH"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

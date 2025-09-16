@@ -1,10 +1,20 @@
+import { useEffect } from "react"
 import { Routes, Route } from "react-router-dom"
 import MainLayout from "./layouts/MainLayout"
 import Landing from "./pages/Landing"
 import Packets from "./pages/Packets"
 import About from "./pages/About"
 
+
 function App() {
+  
+  // User grants permission to receive notifications about temperature alarms
+  useEffect(() => {
+    if (Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []); 
+
   return (
     <Routes>
       {/* Alla sidor använder MainLayout */}

@@ -8,3 +8,6 @@ index-css
 designbeslut. feature 4.1.3
 Även om ul/li kanske hade varit snyggare eller haft fler alternativ för styling togs valet att tabell är ett mer användarvänligt alternativ.
 Har skapat klasser för table-row och table-row-hover
+
+feature 4.2.4
+vid larm ändras titel så man kan se det i tabben även om man är i en annan tab och jobbar, samt en enkel popup från standardAPI som kommer upp i hörnet på skärm 1
