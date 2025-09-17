@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import PacketsItem from "./PacketsItem";
+import React from "react";
 
 const exampleHistory = [
   { text: "Order skapad", timestamp: "08:30" },
@@ -7,14 +8,26 @@ const exampleHistory = [
   { text: "Levererad", timestamp: "11:30" },
 ];
 
+const statusOptions = [
+  "Order skapad",
+  "Lastad på bil",
+  "Levererad",
+  "Åter inom intervallet",
+  "Avbruten",
+];
+
 const PacketsList = () => {
   const [selectedPacket, setSelectedPacket] = useState<any | null>(null);
   const [showPanel, setShowPanel] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editPacket, setEditPacket] = useState<any | null>(null);
 
   const packets = [
     {
       rutt: "Stockholm",
       sändningsnr: "123456",
+      kund: "ICA Maxi",
+      destination: "Storgatan 1, Stockholm",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 5.0,
       minTempMeasured: 4.8,
@@ -25,6 +38,8 @@ const PacketsList = () => {
     {
       rutt: "Göteborg",
       sändningsnr: "654321",
+      kund: "Coop",
+      destination: "Kungsportsavenyen 10, Göteborg",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 9.1,
       minTempMeasured: 4.2,
@@ -35,6 +50,8 @@ const PacketsList = () => {
     {
       rutt: "Stockholm",
       sändningsnr: "121212",
+      kund: "Hemköp",
+      destination: "Drottninggatan 50, Stockholm",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 5.0,
       minTempMeasured: 4.7,
@@ -45,6 +62,8 @@ const PacketsList = () => {
     {
       rutt: "Malmö",
       sändningsnr: "111111",
+      kund: "Lidl",
+      destination: "Södra Förstadsgatan 100, Malmö",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 4.0,
       minTempMeasured: 3.2,
@@ -55,6 +74,8 @@ const PacketsList = () => {
     {
       rutt: "Umeå",
       sändningsnr: "222222",
+      kund: "Willys",
+      destination: "Rådhusesplanaden 10, Umeå",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 6.4,
       minTempMeasured: 5.0,
@@ -65,6 +86,8 @@ const PacketsList = () => {
     {
       rutt: "Örebro",
       sändningsnr: "333333",
+      kund: "City Gross",
+      destination: "Västerlånggatan 5, Örebro",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 3.2,
       minTempMeasured: 2.8,
@@ -75,6 +98,8 @@ const PacketsList = () => {
     {
       rutt: "Göteborg",
       sändningsnr: "131313",
+      kund: "Coop",
+      destination: "Nordstan, Göteborg",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 6.8,
       minTempMeasured: 4.9,
@@ -85,6 +110,8 @@ const PacketsList = () => {
     {
       rutt: "Helsingborg",
       sändningsnr: "444444",
+      kund: "ICA",
+      destination: "Helsingborg C, Helsingborg",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 7.3,
       minTempMeasured: 5.5,
@@ -95,6 +122,8 @@ const PacketsList = () => {
     {
       rutt: "Karlstad",
       sändningsnr: "555555",
+      kund: "Hemköp",
+      destination: "Västra Torggatan 1, Karlstad",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 5.0,
       minTempMeasured: 3.9,
@@ -105,6 +134,8 @@ const PacketsList = () => {
     {
       rutt: "Linköping",
       sändningsnr: "666666",
+      kund: "Willys",
+      destination: "Storgatan 10, Linköping",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 2.0,
       minTempMeasured: 2.0,
@@ -115,6 +146,8 @@ const PacketsList = () => {
     {
       rutt: "Jönköping",
       sändningsnr: "777777",
+      kund: "ICA Maxi",
+      destination: "Huvudgatan 1, Jönköping",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 8.0,
       minTempMeasured: 6.2,
@@ -125,6 +158,8 @@ const PacketsList = () => {
     {
       rutt: "Göteborg",
       sändningsnr: "202020",
+      kund: "Coop",
+      destination: "Göteborg C, Göteborg",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 3.2,
       minTempMeasured: -1.0,
@@ -135,6 +170,8 @@ const PacketsList = () => {
     {
       rutt: "Gävle",
       sändningsnr: "888888",
+      kund: "Hemköp",
+      destination: "Gävle C, Gävle",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 6.0,
       minTempMeasured: 5.1,
@@ -145,6 +182,8 @@ const PacketsList = () => {
     {
       rutt: "Borås",
       sändningsnr: "999999",
+      kund: "Willys",
+      destination: "Borås C, Borås",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 9.0,
       minTempMeasured: 4.6,
@@ -155,6 +194,8 @@ const PacketsList = () => {
     {
       rutt: "Sundsvall",
       sändningsnr: "101010",
+      kund: "ICA",
+      destination: "Sundsvall C, Sundsvall",
       expectedTemp: { min: 2, max: 8 },
       currentTemp: 5.5,
       minTempMeasured: 3.9,
@@ -185,6 +226,32 @@ const PacketsList = () => {
       setTimeout(() => setShowPanel(true), 10);
     } else {
       setShowPanel(false);
+    }
+  }, [selectedPacket]);
+
+  // Spara ändringar
+  const handleSave = () => {
+    // Här kan du lägga till logik för att spara till backend/global state
+    Object.assign(selectedPacket, editPacket);
+    setEditMode(false);
+  };
+
+  // Avbryt leverans
+  const handleCancelDelivery = () => {
+    setEditPacket({
+      ...editPacket,
+      status: { text: "Avbruten", timestamp: new Date().toLocaleTimeString().slice(0, 5) },
+    });
+  };
+
+  // När popup öppnas, kopiera paketet till editPacket
+  useEffect(() => {
+    if (selectedPacket) {
+      setEditPacket({ ...selectedPacket });
+      setTimeout(() => setShowPanel(true), 10);
+    } else {
+      setShowPanel(false);
+      setEditMode(false);
     }
   }, [selectedPacket]);
 
@@ -236,10 +303,91 @@ const PacketsList = () => {
           <h2 className="text-lg font-bold text-[#2782E2] mb-2">
             Paketinformation
           </h2>
-          <div className="mb-4 text-sm text-gray-700">
-            <div><span className="font-semibold">Rutt:</span> {selectedPacket.rutt}</div>
-            <div><span className="font-semibold">Sändningsnr:</span> {selectedPacket.sändningsnr}</div>
-          </div>
+          {!editMode ? (
+            <>
+              <div className="mb-4 text-sm text-gray-700">
+                <div><span className="font-semibold">Rutt:</span> {selectedPacket.rutt}</div>
+                <div><span className="font-semibold">Sändningsnr:</span> {selectedPacket.sändningsnr}</div>
+                <div><span className="font-semibold">Kund:</span> {selectedPacket.kund || "-"}</div>
+                <div><span className="font-semibold">Destination:</span> {selectedPacket.destination || "-"}</div>
+                <div><span className="font-semibold">Status:</span> {selectedPacket.status.text} ({selectedPacket.status.timestamp})</div>
+              </div>
+              <div className="flex gap-2 mb-4">
+                <button
+                  className="bg-[#2782E2] text-white px-3 py-1 rounded hover:bg-[#1861ad] transition"
+                  onClick={() => setEditMode(true)}
+                >
+                  Redigera
+                </button>
+                <button
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                  onClick={handleCancelDelivery}
+                >
+                  Avbryt leverans
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-4 text-sm text-gray-700 flex flex-col gap-2">
+                <label>
+                  <span className="font-semibold">Rutt:</span>
+                  <input
+                    className="ml-2 border rounded px-2 py-1"
+                    value={editPacket.rutt}
+                    onChange={e => setEditPacket({ ...editPacket, rutt: e.target.value })}
+                  />
+                </label>
+                <label>
+                  <span className="font-semibold">Kund:</span>
+                  <input
+                    className="ml-2 border rounded px-2 py-1"
+                    value={editPacket.kund || ""}
+                    onChange={e => setEditPacket({ ...editPacket, kund: e.target.value })}
+                  />
+                </label>
+                <label>
+                  <span className="font-semibold">Destination:</span>
+                  <input
+                    className="ml-2 border rounded px-2 py-1"
+                    value={editPacket.destination || ""}
+                    onChange={e => setEditPacket({ ...editPacket, destination: e.target.value })}
+                  />
+                </label>
+                <label>
+                  <span className="font-semibold">Status:</span>
+                  <select
+                    className="ml-2 border rounded px-2 py-1"
+                    value={editPacket.status.text}
+                    onChange={e =>
+                      setEditPacket({
+                        ...editPacket,
+                        status: { ...editPacket.status, text: e.target.value, timestamp: new Date().toLocaleTimeString().slice(0, 5) },
+                      })
+                    }
+                  >
+                    {statusOptions.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="flex gap-2 mb-4">
+                <button
+                  className="bg-[#2782E2] text-white px-3 py-1 rounded hover:bg-[#1861ad] transition"
+                  onClick={handleSave}
+                >
+                  Spara
+                </button>
+                <button
+                  className="bg-gray-300 text-gray-700 px-3 py-1 rounded hover:bg-gray-400 transition"
+                  onClick={() => setEditMode(false)}
+                >
+                  Avbryt
+                </button>
+              </div>
+            </>
+          )}
           <h3 className="text-md font-bold text-[#2782E2] mb-2">
             Historik
           </h3>
