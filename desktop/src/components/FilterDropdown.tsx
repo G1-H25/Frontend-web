@@ -21,7 +21,8 @@ export default function FilterDropdown({
 }: FilterDropdownProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<(string | number)[]>(selectedProp);
-  const timerRef = useRef<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
   useEffect(() => {
     setSelected(selectedProp);
