@@ -56,6 +56,7 @@ jobs:
   deploy:
     needs: setup-and-build  # kör bara om build-and-test lyckas
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     defaults:
       run:
         working-directory: ./desktop
