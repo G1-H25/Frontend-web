@@ -78,4 +78,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: TrackApp-WebAdmin
-          package: ./dist
+          package: ./desktop/dist
+          slot-name: production
