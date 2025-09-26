@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "verbatimModuleSyntax": false,  // <- tillåt Jest att transpila moduler
+    "esModuleInterop": true
+  }
+}
