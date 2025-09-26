@@ -1,4 +1,4 @@
-name: CI – TypeScript, Tailwind, Lint, Delete branch
+name: CI – TypeScript, Tailwind, Lint
 
 on:
   pull_request:
@@ -43,6 +43,6 @@ jobs:
       - name: Build (TypeScript + Vite + Tailwind)
         run: npm run build
 
-      # - name: Run tests (uncomment when you have them)
-      #   run: npm test
+      - name: Run tests (uncomment when you have them)
+        run: npm test
 
