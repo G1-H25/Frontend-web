@@ -1,14 +1,13 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
-  preset: 'ts-jest',                        // Hanterar TypeScript automatiskt
-  testEnvironment: 'jsdom',                 // Simulerar webbläsare för React-komponenter
+  preset: 'ts-jest',
+  testEnvironment: 'jsdom',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  testMatch: ['**/*.test.(ts|tsx)'],        // Kör filer som slutar på .test.ts / .test.tsx
-  setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'], 
-                                            // Laddar jest-dom matchers som toBeInTheDocument
+  testMatch: ['**/*.test.(ts|tsx)'],
+  setupFilesAfterEnv: ['@testing-library/jest-dom'], 
   globals: {
     'ts-jest': {
-      tsconfig: 'tsconfig.json',            // Använder ditt projektets tsconfig
+      tsconfig: 'tsconfig.json',
     },
   },
 };
