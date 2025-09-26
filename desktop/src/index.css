@@ -1,68 +1,69 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+@import "tailwindcss";
+
+
+/* @font-face {
+  font-family: 'MyFont';
+  src: url('./assets/fonts/MyFont-Regular.ttf') format('truetype');
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-style: normal;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+@font-face {
+  font-family: 'MyFont';
+  src: url('./assets/fonts/MyFont-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
 }
-a:hover {
-  color: #535bf2;
+
+@font-face {
+  font-family: 'MyFont';
+  src: url('./assets/fonts/MyFont-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'MyFont';
+  src: url('./assets/fonts/MyFont-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@theme {
+  --font-sans: 'MyFont', sans-serif;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
+  @apply font-sans;
+} */
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+@layer components {
+  .table-header-row {
+    @apply text-center text-[#2782E2] px-4 py-2;
+  }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+  .table-row {
+    @apply bg-[#D9F2FF] text-[#2782E2] font-medium text-center transition-colors;
+  }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+    .table-row-hover:hover {
+    @apply bg-[#2782E2] text-white font-medium cursor-pointer;
   }
-  a:hover {
-    color: #747bff;
+
+  .table-row-warning {
+    @apply bg-[#D01338] text-white text-center font-medium transition-colors;
   }
-  button {
-    background-color: #f9f9f9;
+
+  .table-row-warning:hover {
+    @apply bg-[#A91330] font-medium cursor-pointer;
   }
+
+  .table-row-warning-past {
+    @apply bg-[#D9F2FF] text-[#D01338] font-medium text-center transition-colors;
+  }
+
+  .table-row-warning-past:hover {
+    @apply bg-[#2782E2] font-medium text-black cursor-pointer;
+  }
+
 }
