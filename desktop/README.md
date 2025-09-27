@@ -11,3 +11,7 @@ Har skapat klasser för table-row och table-row-hover
 
 feature 4.2.4
 vid larm ändras titel så man kan se det i tabben även om man är i en annan tab och jobbar, samt en enkel popup från standardAPI som kommer upp i hörnet på skärm 1
+Det finns även filterdropdown för att få bättre koll på order som finns
+
+har nu deployat till azure med url: https://zealous-desert-0bb104903.1.azurestaticapps.net
+fjärde försöket att få med trackapp-webadmin först i url, men det verkar inte vara möjligt.
