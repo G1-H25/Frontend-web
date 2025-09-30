@@ -37,6 +37,7 @@ type Packet = {
 type ApiPacket = Omit<Packet, "sender" | "transport"> & {
   sender: { name: string };
   transport: { name: string };
+  status: { text: string; timestamp: string };
 };
 
 interface PacketsState {
@@ -95,11 +96,11 @@ const packetsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPackets.fulfilled, (state, action: PayloadAction<ApiPacket[]>) => {
-      // Mappa sender/transport till string direkt
       state.items = action.payload.map(p => ({
         ...p,
         sender: p.sender.name,
         transport: p.transport.name,
+        status: p.status || { text: 'Mottagen', timestamp: new Date().toISOString() }, // fallback
       }));
     });
   },
