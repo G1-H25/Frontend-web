@@ -1,13 +1,18 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "./loginSlice";
+import type { RootState, AppDispatch } from "../../app/store";
 
 const LoginForm = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error } = useSelector((state: RootState) => state.login);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Här kan du lägga logik för login, t.ex. API-anrop
-    console.log("Username:", username, "Password:", password);
+    dispatch(loginUser({ username, password }));
   };
 
   return (
@@ -17,7 +22,9 @@ const LoginForm = () => {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* Username */}
         <div className="flex flex-col">
-          <label htmlFor="username" className="mb-1 font-medium">Användarnamn</label>
+          <label htmlFor="username" className="mb-1 font-medium">
+            Användarnamn
+          </label>
           <input
             type="text"
             id="username"
@@ -31,7 +38,9 @@ const LoginForm = () => {
 
         {/* Password */}
         <div className="flex flex-col">
-          <label htmlFor="password" className="mb-1 font-medium">Lösenord</label>
+          <label htmlFor="password" className="mb-1 font-medium">
+            Lösenord
+          </label>
           <input
             type="password"
             id="password"
@@ -43,12 +52,18 @@ const LoginForm = () => {
           />
         </div>
 
+        {/* Error message */}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
         {/* Submit */}
         <button
           type="submit"
-          className="bg-[#D01338] text-white px-4 py-2 rounded-md font-medium hover:bg-[#A91330] hover:cursor-pointer transition"
+          disabled={loading}
+          className={`bg-[#D01338] text-white px-4 py-2 rounded-md font-medium transition
+            ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#A91330] hover:cursor-pointer"}
+          `}
         >
-          Logga in
+          {loading ? "Loggar in..." : "Logga in"}
         </button>
       </form>
     </div>
