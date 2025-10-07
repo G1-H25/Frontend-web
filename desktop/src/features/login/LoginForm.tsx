@@ -1,13 +1,13 @@
 import { useState } from "react";
 
 const LoginForm = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Här kan du lägga logik för login, t.ex. API-anrop
-    console.log("Email:", email, "Password:", password);
+    console.log("Username:", username, "Password:", password);
   };
 
   return (
@@ -15,16 +15,16 @@ const LoginForm = () => {
       <h1 className="text-3xl font-bold mb-6 text-center">Logga in</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {/* Email */}
+        {/* Username */}
         <div className="flex flex-col">
-          <label htmlFor="email" className="mb-1 font-medium">E-post</label>
+          <label htmlFor="username" className="mb-1 font-medium">Användarnamn</label>
           <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
-            placeholder="exempel@mail.com"
+            placeholder="Ditt användarnamn"
             className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
