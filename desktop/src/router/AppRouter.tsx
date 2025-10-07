@@ -3,7 +3,7 @@ import MainLayout from "../layouts/MainLayout"
 import Landing from "../pages/Landing"
 import Packets from "../pages/Packets"
 import About from "../pages/About"
-// import Login from "../pages/login/Login"
+import Login from "../features/login/LoginPage"
 
 export default function AppRouter() {
   return (
@@ -12,7 +12,7 @@ export default function AppRouter() {
         <Route index element={<Landing />} />
         <Route path="packets" element={<Packets />} />
         <Route path="about" element={<About />} />
-        {/* <Route path="login" element={<Login />} /> */}
+        <Route path="login" element={<Login />} />
       </Route>
     </Routes>
   )
