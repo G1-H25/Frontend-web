@@ -6,10 +6,10 @@ const config: JestConfigWithTsJest = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testMatch: ['**/*.test.(ts|tsx)'],
-  setupFilesAfterEnv: ['@testing-library/jest-dom'],
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'], // <- här pekar vi på vår setup-fil
   globals: {
     'ts-jest': {
-      tsconfig: './tsconfig.jest.json', // <- pekar på den nya
+      tsconfig: './tsconfig.jest.json',
       useESM: true
     }
   }
