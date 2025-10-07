@@ -18,7 +18,7 @@ const initialState: LoginState = {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Async thunk för login
+// Async thunk för login funktion
 export const loginUser = createAsyncThunk(
   "login/loginUser",
   async (
