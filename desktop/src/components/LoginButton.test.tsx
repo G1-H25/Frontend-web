@@ -1,11 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
 import LoginButton from "./LoginButton";
-import { TextEncoder, TextDecoder } from "util";
-
-(globalThis as unknown as { TextEncoder: typeof TextEncoder }).TextEncoder = TextEncoder;
-(globalThis as unknown as { TextDecoder: typeof TextDecoder }).TextDecoder = TextDecoder;
-
 
 describe("LoginButton", () => {
   it("should render a button with the text 'Logga in'", () => {
