@@ -1,10 +1,6 @@
-// src/redux/loginSlice.ts
+// desktop\src\features\login\loginSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import dotenv from "dotenv";
-
-dotenv.config();
-
 
 // Typ för state
 interface LoginState {
@@ -47,6 +43,7 @@ export const loginUser = createAsyncThunk(
       const data = await response.json();
       return data.token; // JWT från backend
     } catch (err) {
+      console.error("Login failed:", err);
       return rejectWithValue("Network error");
     }
   }
