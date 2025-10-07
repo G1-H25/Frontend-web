@@ -3,7 +3,7 @@ import MainLayout from "../layouts/MainLayout"
 import Landing from "../pages/Landing"
 import Packets from "../pages/Packets"
 import About from "../pages/About"
-import Login from "../features/login/Login"
+import Login from "../features/login/Login_temp"
 
 export default function AppRouter() {
   return (
