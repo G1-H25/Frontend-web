@@ -1,6 +1,10 @@
 // src/redux/loginSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 
 // Typ för state
 interface LoginState {
@@ -16,6 +20,8 @@ const initialState: LoginState = {
   error: null,
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 // Async thunk för login
 export const loginUser = createAsyncThunk(
   "login/loginUser",
@@ -25,7 +31,7 @@ export const loginUser = createAsyncThunk(
   ) => {
     try {
       const response = await fetch(
-        "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net/Login",
+        `${API_URL}/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
