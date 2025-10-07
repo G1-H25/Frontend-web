@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Check } from "lucide-react";
 import type { RootState } from "../app/store";
-import { setFilterBoolean } from "../redux/packetsSlice";
+import { setFilterBoolean } from "../features/packets/packetsSlice";
 
 const FilterToggle = () => {
   const dispatch = useDispatch();

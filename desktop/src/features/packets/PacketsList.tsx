@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../app/store";
-import { fetchPackets, selectSortedPackets, setFilterArray } from "../redux/packetsSlice";
+import type { AppDispatch, RootState } from "../../app/store";
+import { fetchPackets, selectSortedPackets, setFilterArray } from "./packetsSlice";
 import PacketsItem from "./PacketsItem";
-import useTempAlarmNotification from "../hooks/useTempAlarmNotification";
+import useTempAlarmNotification from "../../hooks/useTempAlarmNotification";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import FilterDropdown from "../components/FilterDropdown";
-import type { Option } from "../components/FilterDropdown";
-import FilterToggle from "../components/FilterToggle";
+import FilterDropdown from "../../components/FilterDropdown";
+import type { Option } from "../../components/FilterDropdown";
+import FilterToggle from "../../components/FilterToggle";
 
 const PacketsList = () => {
   const dispatch = useDispatch<AppDispatch>();
