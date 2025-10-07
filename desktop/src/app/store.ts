@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import packetsReducer from "../redux/packetsSlice";
+import packetsReducer from "../features/packets/packetsSlice";
 
 export const store = configureStore({
   reducer: {
