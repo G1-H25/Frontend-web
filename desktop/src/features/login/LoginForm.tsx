@@ -68,7 +68,7 @@ const LoginForm = () => {
         </div>
 
         {/* Error message */}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-[#D01338]-500 text-sm">{error}</p>}
 
         {/* Submit */}
         <button

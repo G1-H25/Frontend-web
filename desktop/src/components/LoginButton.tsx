@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import type { RootState } from "../app/store";
 import { logout } from "../features/login/loginSlice";
 import { parseJwt } from "../utils/jwt";
+import { useEffect } from "react";
 
 const LoginButton = () => {
   const dispatch = useDispatch();
@@ -10,6 +11,14 @@ const LoginButton = () => {
   const location = useLocation();
   const token = useSelector((state: RootState) => state.login.token);
   const user = token ? parseJwt(token) : null;
+
+  // To see the JWT token in the console
+  useEffect(() => {
+  if (token) {
+    console.log("JWT token:", token);
+    console.log("Token payload:", user);
+  }
+}, [token, user]);
 
   const handleLogout = () => {
     dispatch(logout());
