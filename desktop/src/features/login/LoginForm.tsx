@@ -1,19 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
+import type { Location } from "history";
 import { loginUser } from "./loginSlice";
 import type { RootState, AppDispatch } from "../../app/store";
 
 const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { loading, error } = useSelector((state: RootState) => state.login);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { token, loading, error } = useSelector((state: RootState) => state.login);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  // Spara var användaren kom ifrån, default "/"
+  const from = (location.state as { from?: Location })?.from?.pathname || "/";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(loginUser({ username, password }));
   };
+
+  // Navigera tillbaka när token finns (login lyckades)
+  useEffect(() => {
+    if (token) {
+      navigate(from, { replace: true });
+    }
+  }, [token, navigate, from]);
 
   return (
     <div className="max-w-md mx-auto p-6 border border-[#9ACEFE] bg-white rounded-md shadow-md">
@@ -53,7 +68,7 @@ const LoginForm = () => {
         </div>
 
         {/* Error message */}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-[#D01338] text-sm">{error}</p>}
 
         {/* Submit */}
         <button
