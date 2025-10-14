@@ -16,9 +16,12 @@ const initialState: LoginState = {
   error: null,
 };
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL =
+  import.meta.env.DEV
+    ? "/api" // dev proxy
+    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net"; // prod
 
-// Async thunk för login
+// Async thunk för login funktion
 export const loginUser = createAsyncThunk(
   "login/loginUser",
   async (
@@ -26,14 +29,12 @@ export const loginUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await fetch(
-        `${API_URL}/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(credentials),
-        }
-      );
+      const response = await fetch(`${API_URL}/Login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -41,6 +42,7 @@ export const loginUser = createAsyncThunk(
       }
 
       const data = await response.json();
+      console.log(data);
       return data.token; // JWT från backend
     } catch (err) {
       console.error("Login failed:", err);

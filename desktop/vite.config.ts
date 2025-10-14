@@ -7,5 +7,14 @@ export default defineConfig({
   base: '/',
   build: {
     outDir: 'dist'
-  } 
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // tar bort /api-prefixet
+      },
+    },
+  },
 })

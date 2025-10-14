@@ -1,5 +1,5 @@
-import Navbar from "./Navbar"
-import LoginButton from "./LoginButton"
+import Navbar from "./Navbar";
+import LoginButton from "./LoginButton";
 import Logo from "../assets/logo-T.png";
 
 const Header = () => {
@@ -15,17 +15,18 @@ const Header = () => {
             style={{ top: "-5px", right: "-14px", position: "relative" }}
           />
           <h1 className="text-xl font-bold text-[#00072D] z-10">rackApp</h1>
-          
         </div>
 
         {/* Mitten: Navbar */}
         <Navbar />
 
-        {/* Höger: Login */}
-        <LoginButton />
+        {/* Höger: Login / Logout */}
+        <div className="flex items-center gap-2">
+          <LoginButton />
+        </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
