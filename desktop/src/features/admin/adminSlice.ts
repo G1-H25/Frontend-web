@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface NewUser {
   username: string;
@@ -27,9 +26,13 @@ const API_URL =
 
 
 // Async thunk för att skapa användare
-export const signupUser = createAsyncThunk(
+export const signupUser = createAsyncThunk<
+  string,          // ✅ Returntyp
+  NewUser,         // ✅ Argumenttyp
+  { rejectValue: string } // ✅ Typ för rejectWithValue
+>(
   "admin/signupUser",
-  async (newUser: NewUser, { rejectWithValue }) => {
+  async (newUser, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_URL}/Signup`, {
         method: "POST",
@@ -37,26 +40,20 @@ export const signupUser = createAsyncThunk(
         body: JSON.stringify(newUser),
       });
 
-      // Om requesten misslyckades (ex: användare redan finns)
       if (!response.ok) {
         const text = await response.text();
         return rejectWithValue(text || "Signup failed");
       }
 
-      // Försök läsa JSON, annars text
       const text = await response.text();
-      try {
-        const data = JSON.parse(text);
-        return data;
-      } catch {
-        return text; // Ex. "User created successfully."
-      }
+      return text; // t.ex. "User created successfully."
     } catch (err) {
       console.error("Signup failed:", err);
       return rejectWithValue("Network error");
     }
   }
 );
+
 
 
 const adminSlice = createSlice({
@@ -80,10 +77,12 @@ const adminSlice = createSlice({
         state.loading = false;
         state.success = true;
       })
-      .addCase(signupUser.rejected, (state, action: PayloadAction<any>) => {
+      .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? "Okänt fel";
       });
+
+
   },
 });
 
