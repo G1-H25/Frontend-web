@@ -4,6 +4,9 @@ import Landing from "../pages/Landing"
 import Packets from "../pages/Packets"
 import About from "../pages/About"
 import LoginPage from "../pages/LoginPage"
+import AdminPage from "../pages/AdminPage"
+import ProtectedRoute from "../components/ProtectedRoute"
+
 
 export default function AppRouter() {
   return (
@@ -13,6 +16,14 @@ export default function AppRouter() {
         <Route path="packets" element={<Packets />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<LoginPage />} />
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute role="Admin">
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   )
