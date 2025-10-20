@@ -1,14 +1,16 @@
 // features/packets/PacketDetails.tsx
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPacketDetail, selectPacketDetail, clearPacketDetail } from "./packetDetailSlice";
 import type { AppDispatch } from "../../app/store";
+import { ArrowLeft } from "lucide-react";
 
 const PacketDetails = () => {
   const { packetId } = useParams<{ packetId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const { packet, loading, error } = useSelector(selectPacketDetail);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (packetId) {
@@ -26,6 +28,15 @@ const PacketDetails = () => {
 
   return (
     <div className="p-6 bg-white shadow rounded-md">
+
+      <button
+        onClick={() => navigate("/packets")}
+        className="mb-4 flex items-center text-blue-600 hover:text-blue-800 transition hover:cursor-pointer"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Tillbaka till alla ordrar
+      </button>
+
       <h1 className="text-2xl font-bold mb-4 text-center">Order {packet.sändningsnr}</h1>
       
       <div className="mb-6 grid grid-cols-3 gap-8">
