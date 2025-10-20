@@ -49,13 +49,15 @@ const PacketDetails = () => {
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Avsändare</h2>
           <p>{packet.sender.name}</p>
-          <p>{packet.sender.address}, {packet.sender.postcode} {packet.sender.city}</p>
+          <p>{packet.sender.address}</p>
+          <p>{packet.sender.postcode} {packet.sender.city}</p>
         </section>
 
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Mottagare</h2>
           <p>{packet.recipient.name}</p>
-          <p>{packet.recipient.address}, {packet.recipient.postcode} {packet.recipient.city}</p>
+          <p>{packet.recipient.address}</p>
+          <p>{packet.recipient.postcode} {packet.recipient.city}</p>
         </section>
       </div>
       
