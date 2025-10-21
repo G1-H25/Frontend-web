@@ -60,7 +60,7 @@ const PacketsList = () => {
   };
 
   return (
-    <div className="p-4 border border-[#9ACEFE] bg-white">
+    <div className="p-4 border border-[#9ACEFE] bg-white rounded-md">
       <div className="flex items-center justify-center mt-4 mb-8">
         {/* Vänster knapp */}
         <button className="p-2 text-[#2782E2] hover:bg-[#EAF4FF] rounded-full transition active:scale-95">
