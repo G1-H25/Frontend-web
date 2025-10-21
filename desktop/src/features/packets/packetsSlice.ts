@@ -2,14 +2,20 @@ import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 
-// Async thunk för att hämta paket från API
+
+const API_URL =
+  import.meta.env.DEV
+    ? "/api"
+    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
+
+// Async thunk för att hämta paket från nya API
 export const fetchPackets = createAsyncThunk(
   "packets/fetchPackets",
   async () => {
-    const response = await fetch("http://localhost:3000/orders");
+    const response = await fetch(`${API_URL}/Delivery/retrieve`);
     if (!response.ok) throw new Error("Failed to fetch packets");
     const data = await response.json();
-    return data as ApiPacket[];
+    return data; // vi mappar senare i fulfilled
   }
 );
 
@@ -31,13 +37,6 @@ type Packet = {
   status: Status;
   sender: string;
   transport: string;
-};
-
-// Typ som matchar API-svaret
-type ApiPacket = Omit<Packet, "sender" | "transport"> & {
-  sender: { name: string };
-  transport: { name: string };
-  status: { text: string; timestamp: string };
 };
 
 interface PacketsState {
@@ -95,12 +94,23 @@ const packetsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchPackets.fulfilled, (state, action: PayloadAction<ApiPacket[]>) => {
+    builder.addCase(fetchPackets.fulfilled, (state, action: PayloadAction<any[]>) => {
       state.items = action.payload.map(p => ({
-        ...p,
-        sender: p.sender.name,
-        transport: p.transport.name,
-        status: p.status || { text: 'Mottagen', timestamp: new Date().toISOString() }, // fallback
+        id: p.deliveryId?.toString() ?? "",
+        sändningsnr: p.deliveryId?.toString() ?? "",
+        rutt: p.routeCode ?? "",
+        expectedTemp: { min: p.expectedTempMin ?? 0, max: p.expectedTempMax ?? 0 },
+        currentTemp: p.currentTemp ?? 0,
+        minTempMeasured: p.tempMinMeasured ?? 0,
+        maxTempMeasured: p.tempMaxMeasured ?? 0,
+        expectedHumidity: { min: p.expectedHumidMin ?? 0, max: p.expectedHumidMax ?? 0 },
+        currentHumidity: p.currentHumid ?? 0,
+        minHumidityMeasured: p.humidMinMeasured ?? 0,
+        maxHumidityMeasured: p.humidMaxMeasured ?? 0,
+        timeOutsideRange: p.tempOutOfRange ?? 0,
+        status: p.status ?? { text: "Mottagen", timestamp: new Date().toISOString() },
+        sender: p.sender ?? "Okänd avsändare",
+        transport: p.carrier ?? "Okänd transport",
       }));
     });
   },
