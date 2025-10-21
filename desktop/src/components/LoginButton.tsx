@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import type { RootState } from "../app/store";
 import { logout } from "../features/login/loginSlice";
 import { parseJwt } from "../utils/jwt";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const LoginButton = () => {
   const dispatch = useDispatch();
@@ -12,13 +12,13 @@ const LoginButton = () => {
   const token = useSelector((state: RootState) => state.login.token);
   const user = token ? parseJwt(token) : null;
 
-  // To see the JWT token in the console
-  useEffect(() => {
-    if (token) {
-      console.log("JWT token:", token);
-      console.log("Token payload:", user);
-    }
-  }, [token, user]);
+  //! To see the JWT token in the console, only for development
+  // useEffect(() => {
+  //   if (token) {
+  //     console.log("JWT token:", token);
+  //     console.log("Token payload:", user);
+  //   }
+  // }, [token, user]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -35,7 +35,7 @@ const LoginButton = () => {
 
   const role = user?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-  // Om användaren inte är inloggad och redan är på /login, visa inget
+  // Om man inte är inloggad och är på login-sidan → ta bort knappen
   if (!userName && location.pathname === "/login") {
     return null;
   }

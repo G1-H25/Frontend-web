@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 type PacketProps = {
   rutt: string;
   sändningsnr: string;
@@ -43,9 +45,11 @@ const PacketsItem = ({
     rowClass = "table-row-warning-past table-row-warning-past:hover"; // Previous outside range
   }
 
+  const navigate = useNavigate();
+
 
   return (
-    <tr className={rowClass}>
+    <tr onClick={() => navigate(`/packets/${sändningsnr}`)} className={rowClass}>
       <td className="p-2">{sender}</td>
       <td className="p-2">{transport}</td>
       <td className="p-2">{rutt}</td>

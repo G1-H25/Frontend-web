@@ -42,7 +42,7 @@ export const loginUser = createAsyncThunk(
       }
 
       const data = await response.json();
-      console.log(data);
+      
       return data.token; // JWT från backend
     } catch (err) {
       console.error("Login failed:", err);
