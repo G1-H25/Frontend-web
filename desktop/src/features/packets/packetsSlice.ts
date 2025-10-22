@@ -2,20 +2,39 @@ import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 
-
 const API_URL =
   import.meta.env.DEV
     ? "/api"
     : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
 
-// Async thunk för att hämta paket från nya API
-export const fetchPackets = createAsyncThunk(
+// Typ för API-responsen (rådata innan vi mappar den)
+type RawPacket = {
+  deliveryId?: string | number;
+  routeCode?: string;
+  expectedTempMin?: number;
+  expectedTempMax?: number;
+  currentTemp?: number;
+  tempMinMeasured?: number;
+  tempMaxMeasured?: number;
+  expectedHumidMin?: number;
+  expectedHumidMax?: number;
+  currentHumid?: number;
+  humidMinMeasured?: number;
+  humidMaxMeasured?: number;
+  tempOutOfRange?: number;
+  status?: { text: string; timestamp: string };
+  sender?: string;
+  carrier?: string;
+};
+
+// Async thunk för att hämta paket
+export const fetchPackets = createAsyncThunk<RawPacket[]>(
   "packets/fetchPackets",
   async () => {
     const response = await fetch(`${API_URL}/Delivery/retrieve`);
     if (!response.ok) throw new Error("Failed to fetch packets");
-    const data = await response.json();
-    return data; // vi mappar senare i fulfilled
+    const data: RawPacket[] = await response.json();
+    return data;
   }
 );
 
@@ -82,7 +101,10 @@ const packetsSlice = createSlice({
     },
     setFilterArray(
       state,
-      action: PayloadAction<{ field: "rutt" | "status" | "sender" | "transport"; values: string[] }>
+      action: PayloadAction<{
+        field: "rutt" | "status" | "sender" | "transport";
+        values: string[];
+      }>
     ) {
       state.filters[action.payload.field] = action.payload.values;
     },
@@ -94,21 +116,31 @@ const packetsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchPackets.fulfilled, (state, action: PayloadAction<any[]>) => {
-      state.items = action.payload.map(p => ({
+    builder.addCase(fetchPackets.fulfilled, (state, action) => {
+      state.items = action.payload.map((p) => ({
         id: p.deliveryId?.toString() ?? "",
         sändningsnr: p.deliveryId?.toString() ?? "",
         rutt: p.routeCode ?? "",
-        expectedTemp: { min: p.expectedTempMin ?? 0, max: p.expectedTempMax ?? 0 },
+        expectedTemp: {
+          min: p.expectedTempMin ?? 0,
+          max: p.expectedTempMax ?? 0,
+        },
         currentTemp: p.currentTemp ?? 0,
         minTempMeasured: p.tempMinMeasured ?? 0,
         maxTempMeasured: p.tempMaxMeasured ?? 0,
-        expectedHumidity: { min: p.expectedHumidMin ?? 0, max: p.expectedHumidMax ?? 0 },
+        expectedHumidity: {
+          min: p.expectedHumidMin ?? 0,
+          max: p.expectedHumidMax ?? 0,
+        },
         currentHumidity: p.currentHumid ?? 0,
         minHumidityMeasured: p.humidMinMeasured ?? 0,
         maxHumidityMeasured: p.humidMaxMeasured ?? 0,
         timeOutsideRange: p.tempOutOfRange ?? 0,
-        status: p.status ?? { text: "Mottagen", timestamp: new Date().toISOString() },
+        status:
+          p.status ?? {
+            text: "Mottagen",
+            timestamp: new Date().toISOString(),
+          },
         sender: p.sender ?? "Okänd avsändare",
         transport: p.carrier ?? "Okänd transport",
       }));
@@ -116,6 +148,7 @@ const packetsSlice = createSlice({
   },
 });
 
+// SELECTOR
 export const selectSortedPackets = createSelector(
   (state: RootState) => state.packets.items,
   (state: RootState) => state.packets.sortField,
@@ -125,19 +158,21 @@ export const selectSortedPackets = createSelector(
     let filtered = [...items];
 
     if (filters.rutt.length > 0) {
-      filtered = filtered.filter(p => filters.rutt.includes(p.rutt));
+      filtered = filtered.filter((p) => filters.rutt.includes(p.rutt));
     }
     if (filters.status.length > 0) {
-      filtered = filtered.filter(p => filters.status.includes(p.status.text));
+      filtered = filtered.filter((p) => filters.status.includes(p.status.text));
     }
     if (filters.sender.length > 0) {
-      filtered = filtered.filter(p => filters.sender.includes(p.sender));
+      filtered = filtered.filter((p) => filters.sender.includes(p.sender));
     }
     if (filters.transport.length > 0) {
-      filtered = filtered.filter(p => filters.transport.includes(p.transport));
+      filtered = filtered.filter((p) =>
+        filters.transport.includes(p.transport)
+      );
     }
     if (filters.timeOutsideRange) {
-      filtered = filtered.filter(p => p.timeOutsideRange > 0);
+      filtered = filtered.filter((p) => p.timeOutsideRange > 0);
     }
 
     return filtered.sort((a, b) => {
@@ -175,5 +210,11 @@ export const selectSortedPackets = createSelector(
   }
 );
 
-export const { setPackets, setSortField, setFilterArray, setFilterBoolean } = packetsSlice.actions;
+export const {
+  setPackets,
+  setSortField,
+  setFilterArray,
+  setFilterBoolean,
+} = packetsSlice.actions;
+
 export default packetsSlice.reducer;
