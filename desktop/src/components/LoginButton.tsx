@@ -15,10 +15,32 @@ const LoginButton = () => {
   //! To see the JWT token in the console, only for development
   // useEffect(() => {
   //   if (token) {
+  //     const now = new Date();
+  //     console.log("Now:", now.toLocaleString()); // lokal tid
+  //     console.log("Now UTC:", now.toUTCString()); // UTC
   //     console.log("JWT token:", token);
-  //     console.log("Token payload:", user);
+
+  //     // --- Dekoda JWT ---
+  //     const payloadBase64 = token.split(".")[1]; // mittendelen
+  //     const decodedJson = atob(payloadBase64);   // base64 -> text
+  //     const payload = JSON.parse(decodedJson);   // text -> objekt
+
+  //     console.log("Token payload:", payload);
+
+  //     // --- Hämta och visa exp ---
+  //     if (payload.exp) {
+  //       const expDate = new Date(payload.exp * 1000); // sekunder -> ms
+  //       console.log("Token expires (UTC):", expDate.toUTCString());
+  //       console.log("Token expires (Local):", expDate.toLocaleString());
+
+  //       const timeLeft = (expDate.getTime() - now.getTime()) / 1000 / 60; // minuter kvar
+  //       console.log(`Token expires in: ${timeLeft.toFixed(1)} min`);
+  //     } else {
+  //       console.warn("Ingen exp hittades i token");
+  //     }
   //   }
   // }, [token, user]);
+
 
   const handleLogout = () => {
     dispatch(logout());
