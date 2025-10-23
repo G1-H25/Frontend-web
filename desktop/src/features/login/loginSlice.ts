@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { isTokenExpired } from "../../utils/jwt";
+import type { RootState } from "../../app/store";
 
 // Typ för state
 interface LoginState {
@@ -54,8 +55,9 @@ export const loginUser = createAsyncThunk(
 export const checkTokenValidity = createAsyncThunk(
   "login/checkTokenValidity",
   async (_, { dispatch, getState }) => {
-    const state = getState() as any;
+    const state = getState() as RootState;
     const token = state.login.token;
+
     if (token && isTokenExpired(token)) {
       dispatch(logout());
     }
