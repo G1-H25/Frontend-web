@@ -12,7 +12,7 @@ const Navbar = () => {
           `${linkClasses} ${isActive ? activeClasses : ""}`
         }
       >
-        Hem
+        Start
       </NavLink>
       <NavLink
         to="/packets"
@@ -20,7 +20,7 @@ const Navbar = () => {
           `${linkClasses} ${isActive ? activeClasses : ""}`
         }
       >
-        Paketen
+        Sändningar
       </NavLink>
       <NavLink
         to="/about"
@@ -28,7 +28,7 @@ const Navbar = () => {
           `${linkClasses} ${isActive ? activeClasses : ""}`
         }
       >
-        Om oss
+        Våra tjänster
       </NavLink>
     </nav>
   )

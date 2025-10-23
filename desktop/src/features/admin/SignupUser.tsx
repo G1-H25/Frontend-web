@@ -2,9 +2,14 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signupUser, resetState } from "./adminSlice";
 import type { RootState, AppDispatch } from "../../app/store";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const SignupUser = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+
   const { loading, error, success } = useSelector((state: RootState) => state.admin);
 
   const [username, setUsername] = useState("");
@@ -39,9 +44,26 @@ const SignupUser = () => {
   await dispatch(signupUser(formData));
 };
 
+ // Tillbaka-knapp
+ const handleBack = () => {
+  if (window.history.length > 1) {
+    navigate(-1);
+  } else {
+    navigate("/"); // fallback till startsidan om ingen historia finns
+  }
+};
+
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 border border-[#9ACEFE] bg-white rounded-md shadow-md">
+      <button
+        onClick={handleBack}
+        className="mb-4 flex items-center text-[#00072D] hover:text-blue-700 transition hover:cursor-pointer"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Tillbaka
+      </button>
+
       <h2 className="text-2xl font-bold mb-6 text-center">Skapa användare</h2>
 
       {error && <p className="text-[#D01338] text-sm mb-4">{error}</p>}
