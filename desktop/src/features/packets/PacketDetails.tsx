@@ -31,7 +31,7 @@ const PacketDetails = () => {
 
       <button
         onClick={() => navigate("/packets")}
-        className="mb-4 flex items-center text-blue-600 hover:text-blue-800 transition hover:cursor-pointer"
+        className="mb-4 flex items-center text-[#00072D] hover:text-blue-700 transition hover:cursor-pointer"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
         Tillbaka till alla ordrar
