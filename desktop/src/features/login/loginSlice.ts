@@ -1,6 +1,7 @@
 // desktop\src\features\login\loginSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { isTokenExpired } from "../../utils/jwt";
 
 // Typ för state
 interface LoginState {
@@ -11,17 +12,17 @@ interface LoginState {
 
 // Initial state
 const initialState: LoginState = {
-  token: localStorage.getItem("token") || null, // läser från localStorage om redan inloggad
+  token: localStorage.getItem("token") || null,
   loading: false,
   error: null,
 };
 
 const API_URL =
   import.meta.env.DEV
-    ? "/api" // dev proxy
-    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net"; // prod
+    ? "/api"
+    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
 
-// Async thunk för login funktion
+// Async thunk för login
 export const loginUser = createAsyncThunk(
   "login/loginUser",
   async (
@@ -30,11 +31,10 @@ export const loginUser = createAsyncThunk(
   ) => {
     try {
       const response = await fetch(`${API_URL}/Login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
       });
-
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -42,11 +42,22 @@ export const loginUser = createAsyncThunk(
       }
 
       const data = await response.json();
-      
-      return data.token; // JWT från backend
+      return data.token;
     } catch (err) {
       console.error("Login failed:", err);
       return rejectWithValue("Network error");
+    }
+  }
+);
+
+// Ny thunk: checkTokenValidity för automatisk logout
+export const checkTokenValidity = createAsyncThunk(
+  "login/checkTokenValidity",
+  async (_, { dispatch, getState }) => {
+    const state = getState() as any;
+    const token = state.login.token;
+    if (token && isTokenExpired(token)) {
+      dispatch(logout());
     }
   }
 );
@@ -69,7 +80,7 @@ export const loginSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action: PayloadAction<string>) => {
         state.loading = false;
         state.token = action.payload;
-        localStorage.setItem("token", action.payload); // spara token
+        localStorage.setItem("token", action.payload);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
