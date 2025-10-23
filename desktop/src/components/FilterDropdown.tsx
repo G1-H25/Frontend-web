@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, ChevronUp, Check } from "lucide-react";
+import { ChevronDown, ChevronUp, Check, RotateCw } from "lucide-react";
 
 export type Option = {
   value: string | number;
@@ -23,7 +23,6 @@ export default function FilterDropdown({
   const [selected, setSelected] = useState<(string | number)[]>(selectedProp);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-
   useEffect(() => {
     setSelected(selectedProp);
   }, [selectedProp]);
@@ -34,6 +33,11 @@ export default function FilterDropdown({
       : [...selected, option];
     setSelected(newSelected);
     onChange?.(newSelected);
+  };
+
+  const handleReset = () => {
+    setSelected([]);
+    onChange?.([]);
   };
 
   const handleMouseEnter = () => {
@@ -47,7 +51,7 @@ export default function FilterDropdown({
     timerRef.current = setTimeout(() => {
       setOpen(false);
       timerRef.current = null;
-    }, 500); // half a second
+    }, 500);
   };
 
   return (
@@ -60,16 +64,14 @@ export default function FilterDropdown({
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between px-4 py-2 rounded-lg font-medium border transition active:scale-95
-          ${
-            selected.length > 0
-              ? "bg-[#D9F2FF] text-[#2782E2] border-[#2782E2]" // filter är aktivt
-              : "bg-[#2782E2] text-white border-[#2782E2] hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
+          ${selected.length > 0
+            ? "bg-[#D9F2FF] text-[#2782E2] border-[#2782E2]"
+            : "bg-[#2782E2] text-white border-[#2782E2] hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
           }`}
       >
         {label}
         {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
       </button>
-
 
       {/* Dropdown-panel */}
       {open && (
@@ -77,6 +79,17 @@ export default function FilterDropdown({
           className="absolute z-10 mt-2 w-[400px] border border-[#9ACEFE] rounded-lg bg-[#2782E2] text-white shadow-lg p-3 grid grid-flow-col auto-rows-max gap-2"
           style={{ gridTemplateRows: "repeat(5, minmax(0, 1fr))" }}
         >
+          {/* Reset-knapp */}
+          {selected.length > 0 && (
+            <button
+              onClick={handleReset}
+              className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+            >
+              <RotateCw size={16} />
+              <span>Återställ alla</span>
+            </button>
+          )}
+
           {options.map((opt) => {
             const isSelected = selected.includes(opt.value);
             return (
