@@ -44,6 +44,7 @@ const LoginButton = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    navigate("/", { replace: true });
   };
 
   const handleLogin = () => {

@@ -1,22 +1,19 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
-import type { Location } from "history";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "./loginSlice";
 import type { RootState, AppDispatch } from "../../app/store";
+import { ArrowLeft } from "lucide-react";
 
 const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const location = useLocation();
+  
 
   const { token, loading, error } = useSelector((state: RootState) => state.login);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  // Spara var användaren kom ifrån, default "/"
-  const from = (location.state as { from?: Location })?.from?.pathname || "/";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,13 +22,23 @@ const LoginForm = () => {
 
   // Navigera tillbaka när token finns (login lyckades)
   useEffect(() => {
-    if (token) {
-      navigate(from, { replace: true });
-    }
-  }, [token, navigate, from]);
+  if (token) {
+    navigate("/packets", { replace: true }); // <-- hoppa till Packets
+  }
+}, [token, navigate]);
+
 
   return (
     <div className="max-w-md mx-auto p-6 border border-[#9ACEFE] bg-white rounded-md shadow-md">
+
+      <button
+        onClick={() => navigate("/")}
+        className="mb-4 flex items-center text-[#00072D] hover:text-blue-700 transition hover:cursor-pointer"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Tillbaka till start
+      </button>
+
       <h1 className="text-3xl font-bold mb-6 text-center">Logga in</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">

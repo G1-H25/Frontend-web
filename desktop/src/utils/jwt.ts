@@ -17,18 +17,20 @@ export function parseJwt(token: string): JwtPayload | null {
   }
 }
 
-// desktop/src/utils/jwt.ts
-export const isTokenExpired = (token: string): boolean => {
+// get exp from token
+export const getTokenExpiration = (token: string): number | null => {
   try {
     const payloadBase64 = token.split('.')[1];
-    if (!payloadBase64) return true;
+    if (!payloadBase64) return null;
 
     const payload = JSON.parse(atob(payloadBase64));
-    const exp = payload.exp;
-    if (!exp) return true;
-
-    return Date.now() >= exp * 1000;
+    return payload.exp || null;
   } catch {
-    return true; // Felaktig token = betraktas som utgången
+    return null;
   }
+};
+
+// check if token is expired
+export const isTokenExpired = (exp: number): boolean => {
+  return Date.now() >= exp * 1000;
 };

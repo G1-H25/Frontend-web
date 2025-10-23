@@ -34,10 +34,10 @@ const PacketDetails = () => {
         className="mb-4 flex items-center text-[#00072D] hover:text-blue-700 transition hover:cursor-pointer"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Tillbaka till alla ordrar
+        Tillbaka till alla sändningar
       </button>
 
-      <h1 className="text-2xl font-bold mb-4 text-center">Order {packet.sändningsnr}</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Sändning {packet.sändningsnr}</h1>
       
       <div className="mb-6 grid grid-cols-3 gap-8">
         <section className="mb-6">
