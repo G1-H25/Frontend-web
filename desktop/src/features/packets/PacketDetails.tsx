@@ -132,31 +132,33 @@ const PacketDetails = () => {
             <div className="flex gap-4 items-center">
               <button
                 onClick={() => setShowTempModal(true)}
-                className="flex items-center gap-2 text-[#D01338] hover:text-[#A91330] transition hover:cursor-pointer"
+                className="flex items-center gap-2 text-[#D01338] border border-gray-400 rounded-lg px-4 py-2 h-10 hover:cursor-pointer shadow-lg hover:bg-gray-200 transition transform active:scale-95"
               >
                 <Thermometer size={18} />
                 Visa temperaturgraf
               </button>
+
               {/* Skrivut-knappar temperatur */}
               <button
                 onClick={() => console.log("Print temperatur")}
-                className="text-black hover:cursor-pointer"
+                className="text-black border border-gray-400 rounded-lg p-2 shadow-lg hover:bg-gray-200 hover:cursor-pointer transition transform active:scale-95"
                 title="Skriv ut temperaturgraf"
               >
                 <Printer size={18} />
               </button>
               <button
                 onClick={() => console.log("Export temperatur")}
-                className="text-black hover:cursor-pointer"
+                className="text-black border border-gray-400 rounded-lg p-2 shadow-lg hover:bg-gray-200 hover:cursor-pointer transition transform active:scale-95"
                 title="Exportera temperaturgraf"
               >
                 <Download size={18} />
               </button>
             </div>
+
             <div className="flex gap-4 items-center">
               <button
                 onClick={() => setShowHumidityModal(true)}
-                className="flex items-center gap-2 text-[#D01338] hover:text-[#A91330] transition hover:cursor-pointer"
+                className="flex items-center gap-2 text-[#D01338] border border-gray-400 rounded-lg px-4 py-2 h-10 shadow-lg hover:cursor-pointer hover:bg-gray-200 transition transform active:scale-95"
               >
                 <Droplets size={18} />
                 Visa luftfuktighetsgraf
@@ -165,20 +167,21 @@ const PacketDetails = () => {
               {/* Skrivut-knappar luftfuktighet */}
               <button
                 onClick={() => console.log("Print luftfuktighet")}
-                className="text-black hover:cursor-pointer"
+                className="text-black border border-gray-400 rounded-lg p-2 shadow-lg hover:cursor-pointer hover:bg-gray-200 transition transform active:scale-95"
                 title="Skriv ut luftfuktighetsgraf"
               >
                 <Printer size={18} />
               </button>
               <button
                 onClick={() => console.log("Export luftfuktighet")}
-                className="text-black hover:cursor-pointer"
+                className="text-black border border-gray-400 rounded-lg p-2 shadow-lg hover:cursor-pointer hover:bg-gray-200 transition transform active:scale-95"
                 title="Exportera luftfuktighetsgraf"
               >
                 <Download size={18} />
               </button>
             </div>
           </div>
+
 
         </div>
 
