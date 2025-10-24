@@ -19,7 +19,7 @@ const FilterToggle = () => {
       className={`relative w-[115px] px-3 py-2 rounded-md border transition
         ${isSelected
           ? "bg-[#D01338] border-[#D01338] text-white"
-          : "bg-[#2782E2] text-white border border-[#2782E2] hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
+          : "bg-[#2782E2] text-white border border-[#2782E2] hover:bg-[#D9F2FF] shadow-lg hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
         }`}
     >
       <span className="block text-left">Larmat?</span>

@@ -124,7 +124,7 @@ const SignupUser = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`bg-[#D01338] text-white px-4 py-2 rounded-md font-medium transition
+          className={`bg-[#D01338] text-white px-4 py-2 rounded-md shadow-lg font-medium transition
             ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#A91330] hover:cursor-pointer"}`}
         >
           {loading ? "Skapar..." : "Skapa användare"}

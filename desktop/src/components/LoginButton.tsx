@@ -69,7 +69,7 @@ const LoginButton = () => {
       {role === "Admin" && (
         <button
           onClick={() => navigate("/admin")}
-          className="bg-yellow-500 text-black px-3 py-1 rounded-md font-medium transition-colors hover:bg-yellow-400 hover:cursor-pointer"
+          className="bg-yellow-500 text-black px-3 py-1 rounded-md font-medium shadow-lg transition-colors hover:bg-yellow-400 hover:cursor-pointer"
         >
           Admin
         </button>
@@ -78,7 +78,7 @@ const LoginButton = () => {
       <span className="font-medium">Inloggad som "{userName}"</span>
       <button
         onClick={handleLogout}
-        className="bg-[#D01338] text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#A91330] hover:cursor-pointer"
+        className="bg-[#D01338] text-white px-4 py-2 rounded-md font-medium shadow-lg transition-colors hover:bg-[#A91330] hover:cursor-pointer"
       >
         Logga ut
       </button>
@@ -86,7 +86,7 @@ const LoginButton = () => {
   ) : (
     <button
       onClick={handleLogin}
-      className="bg-[#D01338] text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-[#A91330] hover:cursor-pointer"
+      className="bg-[#D01338] text-white px-4 py-2 rounded-md font-medium shadow-lg transition-colors hover:bg-[#A91330] hover:cursor-pointer"
     >
       Logga in
     </button>
