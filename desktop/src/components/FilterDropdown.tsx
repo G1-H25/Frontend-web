@@ -66,7 +66,7 @@ export default function FilterDropdown({
         className={`w-full flex items-center justify-between px-4 py-2 rounded-lg font-medium border transition active:scale-95
           ${selected.length > 0
             ? "bg-[#D9F2FF] text-[#2782E2] border-[#2782E2]"
-            : "bg-[#2782E2] text-white border-[#2782E2] hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
+            : "bg-[#2782E2] text-white border-[#2782E2] hover:bg-[#D9F2FF] hover:text-[#2782E2] shadow-lg hover:border-[#2782E2] hover:cursor-pointer"
           }`}
       >
         {label}
@@ -99,7 +99,7 @@ export default function FilterDropdown({
                 className={`relative w-full px-3 py-2 rounded-md border transition
                   ${isSelected
                     ? "bg-[#D9F2FF] border-[#2782E2] text-[#2782E2]"
-                    : "bg-[#2782E2] text-white border border-[#2782E2] hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
+                    : "bg-[#2782E2] text-white border border-[#2782E2] shadow-lg hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
                   }`}
               >
                 <span className="block text-left">{opt.label}</span>

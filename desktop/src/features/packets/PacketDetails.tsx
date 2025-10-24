@@ -127,8 +127,8 @@ const PacketDetails = () => {
 
       {/* Mätvärden + knappar */}
       <section>
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xl font-semibold">Mätvärden</h2>
+        <div className="flex items-center justify-between mb-2 mt-8">
+          <h2 className="text-3xl font-semibold">Mätvärden</h2>
 
           <div className="flex gap-16 items-center">
             {/* Graf-knappar */}
@@ -188,7 +188,7 @@ const PacketDetails = () => {
 
         </div>
 
-        <table className="min-w-full table-auto border border-gray-200">
+        <table className="min-w-full table-auto border border-gray-200 mt-4">
           <thead>
             <tr className="bg-gray-100">
               <th className="border px-3 py-1">Tid</th>
