@@ -58,7 +58,11 @@ const About = () => {
           <div className=" bg-[#0F1F55] hover:bg-[#00072D] text-white rounded-2xl border border-[#00072D] p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-transform">
             <div className="flex items-center gap-2 mb-4">
               <Package className="text-[#D9F2FF]" size={28} />
-              <h3 className="text-xl font-bold">Avancerad nivå – Den vi har byggt appen kring</h3>
+              <h3 className="text-xl font-bold">
+                <span className="mr-2">Avancerad nivå</span>
+                <span className="mx-2">←</span>
+                <span>vår utgångspunkt</span>
+              </h3>
             </div>
             <p className="font-semibold mb-2">Sensor per paket</p>
             <ul className="list-disc list-inside space-y-1">
