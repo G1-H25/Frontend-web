@@ -23,15 +23,18 @@ const PacketDetails = () => {
 
   // 🧠 Hämta paket och rensa vid unmount
   useEffect(() => {
-    if (packetId) {
-      dispatch(fetchPacketDetail(packetId));
+  if (packetId) {
+    const id = Number(packetId);
+    if (!isNaN(id)) {
+      dispatch(fetchPacketDetail(id));
     }
+  }
 
-    return () => {
-      // Ingen return av dispatch (det var felet tidigare)
-      dispatch(clearPacketDetail());
-    };
-  }, [dispatch, packetId]);
+  return () => {
+    dispatch(clearPacketDetail());
+  };
+}, [dispatch, packetId]);
+
 
   if (loading) return <p className="text-gray-500">Laddar paket...</p>;
   if (error) return <p className="text-red-500">Fel: {error}</p>;
@@ -49,7 +52,7 @@ const PacketDetails = () => {
       </button>
 
       <h1 className="text-2xl font-bold mb-4 text-center">
-        Sändning {packet.sändningsnr}
+        Sändning {packet.id}
       </h1>
 
       {/* Grundinfo */}
