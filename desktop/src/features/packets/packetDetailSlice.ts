@@ -2,11 +2,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
+import rawMockOrders from '../../mocks/orders.json';
 
 // Typ för packet detail
 export interface PacketDetailType {
   id: number;
-  sändningsnr: string;
   rutt: string;
   expectedTemp: { name: string; min: number; max: number };
   expectedHumidity: { name: string; min: number; max: number };
@@ -17,6 +17,27 @@ export interface PacketDetailType {
   measurements: { temp: number; humidity: number; timestamp: string }[];
   timeOutsideRange: number;
 }
+
+// Typad mockdata
+const mockOrders: PacketDetailType = {
+  ...rawMockOrders,
+  expectedTemp: {
+    name: rawMockOrders.expectedTemp.name,
+    min: Number(rawMockOrders.expectedTemp.min),
+    max: Number(rawMockOrders.expectedTemp.max),
+  },
+  expectedHumidity: {
+    name: rawMockOrders.expectedHumidity.name,
+    min: Number(rawMockOrders.expectedHumidity.min),
+    max: Number(rawMockOrders.expectedHumidity.max),
+  },
+  measurements: rawMockOrders.measurements.map(m => ({
+    temp: Number(m.temp),
+    humidity: Number(m.humidity),
+    timestamp: m.timestamp,
+  })),
+  timeOutsideRange: Number(rawMockOrders.timeOutsideRange),
+};
 
 interface PacketDetailState {
   packet: PacketDetailType | null;
@@ -30,15 +51,21 @@ const initialState: PacketDetailState = {
   error: null,
 };
 
-// Async thunk
+// Async thunk med fallback till mockdata
 export const fetchPacketDetail = createAsyncThunk<
   PacketDetailType,
-  string,
+  number,
   { state: RootState }
->("packetDetail/fetchPacketDetail", async (sändningsnr) => {
-  const res = await fetch(`http://localhost:3000/order/${sändningsnr}`);
-  if (!res.ok) throw new Error("Failed to fetch packet detail");
-  return res.json();
+>("packetDetail/fetchPacketDetail", async (id) => {
+  try {
+    const res = await fetch(`http://localhost:3000/order/${id}`);
+    if (!res.ok) throw new Error("Failed to fetch packet detail");
+    const data = await res.json();
+    return data as PacketDetailType;
+  } catch (error) {
+    console.warn("Kunde inte hämta från produktion, använder mockdata", error);
+    return mockOrders;
+  }
 });
 
 const packetDetailSlice = createSlice({
