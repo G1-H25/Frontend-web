@@ -8,7 +8,7 @@ import {
   clearPacketDetail,
 } from "./packetDetailSlice";
 import type { AppDispatch } from "../../app/store";
-import { ArrowLeft, Thermometer, Droplets } from "lucide-react";
+import { ArrowLeft, Thermometer, Droplets, Printer, Download } from "lucide-react";
 import GraphModal from "../../components/GraphModal";
 
 const PacketDetails = () => {
@@ -127,22 +127,59 @@ const PacketDetails = () => {
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xl font-semibold">Mätvärden</h2>
 
-          <div className="flex gap-12">
-            <button
-              onClick={() => setShowTempModal(true)}
-              className="flex items-center gap-2 text-[#D01338] hover:text-[#A91330] transition"
-            >
-              <Thermometer size={18} />
-              Visa temperaturgraf
-            </button>
-            <button
-              onClick={() => setShowHumidityModal(true)}
-              className="flex items-center gap-2 text-[#D01338] hover:text-[#A91330] transition"
-            >
-              <Droplets size={18} />
-              Visa luftfuktighetsgraf
-            </button>
+          <div className="flex gap-16 items-center">
+            {/* Graf-knappar */}
+            <div className="flex gap-4 items-center">
+              <button
+                onClick={() => setShowTempModal(true)}
+                className="flex items-center gap-2 text-[#D01338] hover:text-[#A91330] transition hover:cursor-pointer"
+              >
+                <Thermometer size={18} />
+                Visa temperaturgraf
+              </button>
+              {/* Skrivut-knappar temperatur */}
+              <button
+                onClick={() => console.log("Print temperatur")}
+                className="text-black hover:cursor-pointer"
+                title="Skriv ut temperaturgraf"
+              >
+                <Printer size={18} />
+              </button>
+              <button
+                onClick={() => console.log("Export temperatur")}
+                className="text-black hover:cursor-pointer"
+                title="Exportera temperaturgraf"
+              >
+                <Download size={18} />
+              </button>
+            </div>
+            <div className="flex gap-4 items-center">
+              <button
+                onClick={() => setShowHumidityModal(true)}
+                className="flex items-center gap-2 text-[#D01338] hover:text-[#A91330] transition hover:cursor-pointer"
+              >
+                <Droplets size={18} />
+                Visa luftfuktighetsgraf
+              </button>
+
+              {/* Skrivut-knappar luftfuktighet */}
+              <button
+                onClick={() => console.log("Print luftfuktighet")}
+                className="text-black hover:cursor-pointer"
+                title="Skriv ut luftfuktighetsgraf"
+              >
+                <Printer size={18} />
+              </button>
+              <button
+                onClick={() => console.log("Export luftfuktighet")}
+                className="text-black hover:cursor-pointer"
+                title="Exportera luftfuktighetsgraf"
+              >
+                <Download size={18} />
+              </button>
+            </div>
           </div>
+
         </div>
 
         <table className="min-w-full table-auto border border-gray-200">
