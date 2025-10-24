@@ -42,7 +42,7 @@ const Landing = () => {
           {/* Alla sändningar */}
           <button
             onClick={() => handleProtectedNav("/packets")}
-            className="flex flex-col items-center justify-center bg-[#2782E2] hover:bg-[#5DA8FC] text-white rounded-2xl p-8 w-56 h-56 transition shadow-md hover:cursor-pointer"
+            className="flex flex-col items-center justify-center bg-[#2782E2] hover:bg-[#5DA8FC] text-white rounded-2xl p-8 w-56 h-56 transition shadow-lg hover:cursor-pointer"
           >
             <Package size={64} className="mb-4" />
             <span className="text-xl font-semibold">Alla sändningar</span>
@@ -51,7 +51,7 @@ const Landing = () => {
           {/* Sök sändning */}
           <button
             onClick={() => (token ? setShowModal(true) : navigate("/login"))}
-            className="flex flex-col items-center justify-center bg-[#5DA8FC] hover:bg-[#9ACEFE] text-white rounded-2xl p-8 w-56 h-56 transition shadow-md hover:cursor-pointer"
+            className="flex flex-col items-center justify-center bg-[#5DA8FC] hover:bg-[#9ACEFE] text-white rounded-2xl p-8 w-56 h-56 transition shadow-lg hover:cursor-pointer"
           >
             <Search size={64} className="mb-4" />
             <span className="text-xl font-semibold">Sök sändning</span>
@@ -60,7 +60,7 @@ const Landing = () => {
           {/* Våra tjänster */}
           <button
             onClick={() => navigate("/about")}
-            className="flex flex-col items-center justify-center bg-[#0F1F55] hover:bg-[#00072D] text-white rounded-2xl p-8 w-56 h-56 transition shadow-md hover:cursor-pointer"
+            className="flex flex-col items-center justify-center bg-[#0F1F55] hover:bg-[#00072D] text-white rounded-2xl p-8 w-56 h-56 transition shadow-lg hover:cursor-pointer"
           >
             <Briefcase size={64} className="mb-4" />
             <span className="text-xl font-semibold">Våra tjänster</span>
