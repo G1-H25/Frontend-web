@@ -27,7 +27,7 @@ const Landing = () => {
   };
 
   return (
-    <div className="p-45 flex flex-col justify-center items-center bg-[#D9F2FF] rounded-md px-4">
+    <div className="w-fit p-4 mx-auto mt-20 flex flex-col justify-center items-center bg-[#D9F2FF] rounded-md">
       <div className="p-6 border border-[#9ACEFE] bg-white rounded-md shadow-md text-center">
         <h1 className="text-3xl font-bold mb-8 text-[#00072D]">
           Välkommen till TrackApp
