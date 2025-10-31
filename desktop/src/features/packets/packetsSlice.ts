@@ -1,11 +1,7 @@
 import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
-
-const API_URL =
-  import.meta.env.DEV
-    ? "/api"
-    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
+import { fetchDeliveries } from "../../utils/api";
 
 // Typ för API-responsen (rådata innan vi mappar den)
 type RawPacket = {
@@ -31,9 +27,10 @@ type RawPacket = {
 export const fetchPackets = createAsyncThunk<RawPacket[]>(
   "packets/fetchPackets",
   async () => {
-    const response = await fetch(`${API_URL}/Delivery/retrieve`);
-    if (!response.ok) throw new Error("Failed to fetch packets");
-    const data: RawPacket[] = await response.json();
+    // use centralized API client; fetchDeliveries calls /Delivery/retrieve
+    console.debug('PacketsList: fetching deliveries...');
+    const data: RawPacket[] = await fetchDeliveries();
+    console.debug('PacketsList: received data from API:', data);
     return data;
   }
 );

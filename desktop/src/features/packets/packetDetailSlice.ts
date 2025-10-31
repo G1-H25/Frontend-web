@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 import rawMockOrders from '../../mocks/orders.json';
+import { fetchOrder } from '../../utils/api';
 
 // Typ för packet detail
 export interface PacketDetailType {
@@ -58,12 +59,56 @@ export const fetchPacketDetail = createAsyncThunk<
   { state: RootState }
 >("packetDetail/fetchPacketDetail", async (id) => {
   try {
-    const res = await fetch(`http://localhost:3000/order/${id}`);
-    if (!res.ok) throw new Error("Failed to fetch packet detail");
-    const data = await res.json();
-    return data as PacketDetailType;
+    const data: any = await fetchOrder(id);
+    console.debug("PacketDetail: received data from API:", data);
+
+    // Map backend shape to PacketDetailType expected by the UI
+    const mapped: PacketDetailType = {
+      id: Number(data.deliveryId ?? data.DeliveryId ?? 0),
+      rutt: data.routeCode ?? data.RouteCode ?? "",
+      expectedTemp: {
+        name: data.expectedTempName ?? data.expectedTemp?.name ?? "Temperatur",
+        min: Number(data.expectedTempMin ?? data.ExpectedTempMin ?? 0),
+        max: Number(data.expectedTempMax ?? data.ExpectedTempMax ?? 0),
+      },
+      expectedHumidity: {
+        name: data.expectedHumidName ?? data.expectedHumidity?.name ?? "Luftfuktighet",
+        min: Number(data.expectedHumidMin ?? data.ExpectedHumidMin ?? 0),
+        max: Number(data.expectedHumidMax ?? data.ExpectedHumidMax ?? 0),
+      },
+      transport: { name: data.carrier ?? data.Carrier ?? data.transport ?? "Okänd transport" },
+      sender: {
+        name: data.sender ?? data.Sender ?? data.SenderName ?? "Okänd avsändare",
+        address: data.senderAddress ?? "",
+        postcode: Number(data.senderPostcode ?? 0),
+        city: data.senderCity ?? "",
+      },
+      recipient: {
+        name: data.recipient ?? data.Recipient ?? data.RecipientName ?? "Okänd mottagare",
+        address: data.recipientAddress ?? "",
+        postcode: Number(data.recipientPostcode ?? 0),
+        city: data.recipientCity ?? "",
+      },
+      status: [
+        {
+          text: data.currentState ?? data.CurrentState ?? data.statusText ?? "Mottagen",
+          timestamp: data.statusUpdated ?? data.StatusUpdated ?? new Date().toISOString(),
+        },
+      ],
+      measurements: Array.isArray(data.measurements)
+        ? data.measurements.map((m: any) => ({
+            temp: Number(m.temp ?? m.temperature ?? 0),
+            humidity: Number(m.humidity ?? m.humdity ?? 0),
+            timestamp: m.timestamp ?? m.time ?? new Date().toISOString(),
+          }))
+        : [],
+      timeOutsideRange: Number(data.tempOutOfRange ?? data.TempOutOfRange ?? data.timeOutsideRange ?? 0),
+    };
+
+    return mapped;
   } catch (error) {
-    console.warn("Kunde inte hämta från produktion, använder mockdata", error);
+    console.warn("PacketDetail: API call failed, using mockdata:", error);
+    console.debug("PacketDetail: falling back to mock:", mockOrders);
     return mockOrders;
   }
 });

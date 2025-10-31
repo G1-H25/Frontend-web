@@ -1,5 +1,6 @@
 // desktop\src\features\login\loginSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchJson } from "../../utils/api";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { getTokenExpiration, isTokenExpired } from "../../utils/jwt";
 import type { RootState } from "../../app/store";
@@ -18,11 +19,6 @@ const initialState: LoginState = {
   error: null,
 };
 
-const API_URL =
-  import.meta.env.DEV
-    ? "/api"
-    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
-
 // Async thunk för login
 export const loginUser = createAsyncThunk(
   "login/loginUser",
@@ -31,22 +27,33 @@ export const loginUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await fetch(`${API_URL}/Login`, {
+      console.debug('Login: attempting login...', { username: credentials.username });
+      const data = await fetchJson("/Login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
       });
+      console.debug('Login: received response:', data);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        return rejectWithValue(errorData);
+      // tolerate different response shapes: { token }, { accessToken }, { data: { token } }
+      const token = (data && (data.token ?? data.accessToken ?? data?.data?.token)) as string | undefined;
+      if (!token) {
+        console.error('Login: Invalid response format - no token found:', data);
+        return rejectWithValue('Invalid response format from server');
       }
 
-      const data = await response.json();
-      return data.token;
+      return token;
     } catch (err) {
       console.error("Login failed:", err);
-      return rejectWithValue("Network error");
+      // Log the full error for debugging
+      if (err instanceof Error) {
+        console.debug('Login error details:', {
+          message: err.message,
+          stack: err.stack,
+          cause: (err as any).cause
+        });
+      }
+      return rejectWithValue((err as Error).message ?? "Network error");
     }
   }
 );

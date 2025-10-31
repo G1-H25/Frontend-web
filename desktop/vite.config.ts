@@ -10,11 +10,18 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net',
+      '/Login': {
+        target: 'http://localhost:5000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // tar bort /api-prefixet
       },
+      '/Signup': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+      '/Delivery': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      }
     },
   },
 })

@@ -15,7 +15,14 @@ export default function AppRouter() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Landing />} />
         <Route path="packets" element={<Packets />} />
-        <Route path="/packets/:packetId" element={<PacketDetailsPage />} />
+        <Route
+          path="packets/:packetId"
+          element={
+            <ProtectedRoute>
+              <PacketDetailsPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="about" element={<About />} />
         <Route path="login" element={<LoginPage />} />
         <Route

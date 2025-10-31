@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { loginUser } from "./loginSlice";
 import type { RootState, AppDispatch } from "../../app/store";
 import { ArrowLeft } from "lucide-react";
@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const location = useLocation();
   
 
   const { token, loading, error } = useSelector((state: RootState) => state.login);
@@ -22,10 +23,12 @@ const LoginForm = () => {
 
   // Navigera tillbaka när token finns (login lyckades)
   useEffect(() => {
-  if (token) {
-    navigate("/packets", { replace: true }); // <-- hoppa till Packets
-  }
-}, [token, navigate]);
+    if (token) {
+      // om vi blev skickade hit från en skyddad route, navigera tillbaka dit
+      const from = (location.state as any)?.from?.pathname || "/packets";
+      navigate(from, { replace: true });
+    }
+  }, [token, navigate, location]);
 
 
   return (

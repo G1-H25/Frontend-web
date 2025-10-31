@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchText } from "../../utils/api";
 
 interface NewUser {
   username: string;
@@ -19,12 +20,6 @@ const initialState: AdminState = {
   success: false,
 };
 
-const API_URL =
-  import.meta.env.DEV
-    ? "/api"
-    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
-
-
 // Async thunk för att skapa användare
 export const signupUser = createAsyncThunk<
   string,          // ✅ Returntyp
@@ -34,22 +29,16 @@ export const signupUser = createAsyncThunk<
   "admin/signupUser",
   async (newUser, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/Signup`, {
+      const text = await fetchText("/Signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newUser),
       });
 
-      if (!response.ok) {
-        const text = await response.text();
-        return rejectWithValue(text || "Signup failed");
-      }
-
-      const text = await response.text();
       return text; // t.ex. "User created successfully."
     } catch (err) {
       console.error("Signup failed:", err);
-      return rejectWithValue("Network error");
+      return rejectWithValue((err as Error).message ?? "Network error");
     }
   }
 );
