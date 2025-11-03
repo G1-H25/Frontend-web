@@ -4,7 +4,7 @@ import type { RootState } from "../app/store";
 
 const Navbar = () => {
   const linkClasses =
-    "uppercase px-3 py-2 rounded-md hover:bg-[#D9F2FF] hover:text-[#2782E2] transition";
+    "uppercase px-3 py-2 rounded-md hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:cursor-pointer transition";
   const activeClasses = "font-bold underline";
 
   const { token } = useSelector((state: RootState) => state.login);
