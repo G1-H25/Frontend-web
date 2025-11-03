@@ -76,17 +76,25 @@ export default function FilterDropdown({
       {/* Dropdown-panel */}
       {open && (
         <div
-          className="absolute z-10 mt-2 w-[400px] border border-[#9ACEFE] rounded-lg bg-[#2782E2] text-white shadow-lg p-3 grid grid-flow-col auto-rows-max gap-2"
-          style={{ gridTemplateRows: "repeat(5, minmax(0, 1fr))" }}
+          className="
+            absolute z-10 mt-2 w-[380px] 
+            border border-[#9ACEFE] rounded-lg 
+            bg-[#2782E2] text-white shadow-lg p-3
+            flex flex-wrap gap-2
+            overflow-auto
+          "
+          style={{
+            maxHeight: "calc(5 * 3.5rem)", // max 5 rader, justera höjd per kort
+          }}
         >
           {/* Reset-knapp */}
           {selected.length > 0 && (
             <button
               onClick={handleReset}
-              className="flex items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+              className="flex w-full mb-2 items-center gap-2 px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition hover:cursor-pointer"
             >
               <RotateCw size={16} />
-              <span>Återställ alla</span>
+              <span>Återställ</span>
             </button>
           )}
 
@@ -96,19 +104,20 @@ export default function FilterDropdown({
               <button
                 key={opt.value}
                 onClick={() => toggleOption(opt.value)}
-                className={`relative w-full px-3 py-2 rounded-md border transition
+                className={`flex items-center justify-between px-3 py-2 rounded-md border transition
                   ${isSelected
                     ? "bg-[#D9F2FF] border-[#2782E2] text-[#2782E2]"
                     : "bg-[#2782E2] text-white border border-[#2782E2] shadow-lg hover:bg-[#D9F2FF] hover:text-[#2782E2] hover:border-[#2782E2] hover:cursor-pointer"
-                  }`}
+                  }
+                  max-w-full whitespace-nowrap
+                `}
               >
-                <span className="block text-left">{opt.label}</span>
-                {isSelected && (
-                  <Check
-                    size={16}
-                    className="text-[#2782E2] absolute right-3 top-1/2 -translate-y-1/2"
-                  />
-                )}
+                <span className="block">{opt.label}</span>
+
+                {/* Plats för checkmark, alltid reserverad */}
+                <span className="ml-2 flex-shrink-0 w-4 h-4 flex items-center justify-center">
+                  {isSelected && <Check size={16} className="text-[#2782E2]" />}
+                </span>
               </button>
             );
           })}
