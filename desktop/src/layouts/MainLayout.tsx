@@ -10,7 +10,7 @@ const MainLayout = () => {
       style={{
         backgroundImage: `url(${background})`,
         backgroundRepeat: "repeat",
-        backgroundSize: '750px 500px', // kan ändras till 'contain' eller 'cover' om du vill testa
+        backgroundSize: 'contain', // kan ändras till 'contain' eller 'cover' om du vill testa
         backgroundPosition: "top left",
       }}
     >
