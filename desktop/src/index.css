@@ -12,7 +12,9 @@
 }
 
 :root {
-  font-family: Figtree, sans-serif; }
+  font-family: Figtree, sans-serif;
+  background-color: #00072D; 
+}
 
 @layer components {
   .table-header-row {

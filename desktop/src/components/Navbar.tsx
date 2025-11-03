@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 
 const Navbar = () => {
-  const linkClasses = "px-3 py-2 rounded-md hover:bg-[#D9F2FF] hover:text-[#2782E2] transition"
+  const linkClasses = "uppercase px-3 py-2 rounded-md hover:bg-[#D9F2FF] hover:text-[#2782E2] transition"
   const activeClasses = "font-bold underline"
 
   return (

@@ -7,7 +7,7 @@ const API_URL =
     ? "/api"
     : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
 
-// Typ för API-responsen (rådata innan vi mappar den)
+// Typ för API-responsen
 type RawPacket = {
   deliveryId?: string | number;
   routeCode?: string;
@@ -27,16 +27,35 @@ type RawPacket = {
   carrier?: string;
 };
 
-// Async thunk för att hämta paket
-export const fetchPackets = createAsyncThunk<RawPacket[]>(
-  "packets/fetchPackets",
-  async () => {
-    const response = await fetch(`${API_URL}/Delivery/retrieve`);
-    if (!response.ok) throw new Error("Failed to fetch packets");
-    const data: RawPacket[] = await response.json();
-    return data;
+// Async thunk för att hämta paket med token
+export const fetchPackets = createAsyncThunk<
+  RawPacket[],
+  void,
+  { state: RootState }
+>("packets/fetchPackets", async (_, thunkAPI) => {
+  const state = thunkAPI.getState();
+  const token = state.login.token;
+
+  if (!token) throw new Error("User not authenticated");
+
+  const response = await fetch(`${API_URL}/Delivery/retrieveDeliveries`, {
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      // Optionellt: logga ut användaren om token är ogiltig
+      thunkAPI.dispatch({ type: "login/logout" });
+    }
+    throw new Error("Failed to fetch packets");
   }
-);
+
+  const data: RawPacket[] = await response.json();
+  return data;
+});
 
 type Status = { text: string; timestamp: string };
 
