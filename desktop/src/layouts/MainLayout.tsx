@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import background from "../assets/background3.png";
+import background from "../assets/background.png";
 
 const MainLayout = () => {
   return (
@@ -10,7 +10,7 @@ const MainLayout = () => {
       style={{
         backgroundImage: `url(${background})`,
         backgroundRepeat: "repeat",
-        backgroundSize: '500px 500px', // kan ändras till 'contain' eller 'cover' om du vill testa
+        backgroundSize: '750px 500px', // kan ändras till 'contain' eller 'cover' om du vill testa
         backgroundPosition: "top left",
       }}
     >
