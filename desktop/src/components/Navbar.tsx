@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../app/store";
 
@@ -9,6 +9,7 @@ const Navbar = () => {
 
   const { token } = useSelector((state: RootState) => state.login);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleProtectedNav = (path: string) => {
     if (token) {
@@ -29,10 +30,12 @@ const Navbar = () => {
         Start
       </NavLink>
 
-      {/* skyddad länk */}
+      {/* Skyddad länk med samma stil och aktivt läge */}
       <button
         onClick={() => handleProtectedNav("/packets")}
-        className={`${linkClasses}`}
+        className={`${linkClasses} ${
+          location.pathname.startsWith("/packets") ? activeClasses : ""
+        }`}
       >
         Sändningar
       </button>
