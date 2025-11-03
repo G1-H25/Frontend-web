@@ -1,21 +1,42 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Logo from "../assets/logo-T.png";
 import { SiGithub, SiLinkedin } from "react-icons/si";
 
 export default function Footer() {
   const [footerExpanded, setFooterExpanded] = useState(false);
+  const location = useLocation(); // fångar sidbyte (pathname)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const distanceToBottom =
-        document.body.offsetHeight - (window.innerHeight + window.scrollY);
+  const updateFooterState = () => {
+    const pageHeight = document.body.scrollHeight;
+    const windowHeight = window.innerHeight;
+    const distanceToBottom = pageHeight - (windowHeight + window.scrollY);
 
+    if (pageHeight <= windowHeight) {
+      // ingen scroll → stor footer direkt
+      setFooterExpanded(true);
+    } else {
+      // annars bara expandera om man är nära botten
       setFooterExpanded(distanceToBottom <= 90);
-    };
+    }
+  };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  // Kör vid scroll & resize
+  useEffect(() => {
+    window.addEventListener("scroll", updateFooterState);
+    window.addEventListener("resize", updateFooterState);
+
+    return () => {
+      window.removeEventListener("scroll", updateFooterState);
+      window.removeEventListener("resize", updateFooterState);
+    };
   }, []);
+
+  // Kör även vid sidbyte
+  useEffect(() => {
+    // liten delay så DOM hunnit laddas
+    setTimeout(updateFooterState, 50);
+  }, [location.pathname]);
 
   return (
     <footer
@@ -23,7 +44,7 @@ export default function Footer() {
         footerExpanded ? "h-[90px]" : "h-[30px]"
       }`}
     >
-      {/* Logo längst till vänster */}
+      {/* Logo */}
       <div className="flex-none">
         <img
           src={Logo}
@@ -34,7 +55,7 @@ export default function Footer() {
         />
       </div>
 
-      {/* Länkar centrerade */}
+      {/* Länkar (syns bara när footern är expanderad) */}
       {footerExpanded && (
         <div className="flex-1 flex justify-center items-center gap-12 pb-6">
           <a
@@ -54,7 +75,7 @@ export default function Footer() {
             className="flex items-center gap-2 text-[#00072D] hover:text-gray-800 transition"
           >
             <SiLinkedin size={24} />
-            <span>Sidan skapat av Thomas Kronvold</span>
+            <span>Sidan skapad av Thomas Kronvold</span>
           </a>
         </div>
       )}
