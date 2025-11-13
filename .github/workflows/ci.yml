@@ -10,115 +10,63 @@ on:
 permissions:
   contents: read
   id-token: write
-  packages: write
   security-events: write
 
 jobs:
-  # 🧱 Bygg, lint, test + bygg Docker-image vid PR till develop
-  setup-and-build:
-    if: github.base_ref == 'develop'
+  # 🧱 Körs vid PR till develop och main (kodkvalitet)
+  ci-checks:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: ./desktop
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - run: npm ci
-      - run: npm run lint
-      - run: npm test
-      - run: npm run build
+      - name: Install dependencies
+        run: npm ci
 
-      # 🔥 Logga in i GHCR
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Lint
+        run: npm run lint
 
-      # 🐳 Bygg Docker-image baserat på PR-nummer
-      - name: Build Docker image
-        run: |
-          IMAGE_NAME="ghcr.io/${{ github.repository }}:pr-${{ github.event.pull_request.number }}"
-          IMAGE_NAME_LOWER=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
-          echo "IMAGE_NAME_LOWER=$IMAGE_NAME_LOWER" >> $GITHUB_ENV
-          docker build -t "$IMAGE_NAME_LOWER" .
-          docker push "$IMAGE_NAME_LOWER"
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
 
 
-      # 📦 Push image
-      - name: Push Docker image
-        run: docker push ghcr.io/${{ github.repository }}:pr-${{ github.event.pull_request.number }}
-
-
-  # 🔄 Tagga som latest när PR mergas in i main
-  tag-latest:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # ⬇️ Hämta image taggad med PR-numret
-      - name: Pull PR image
-        run: |
-          docker pull ghcr.io/${{ github.repository }}:pr-${{ github.event.number }}
-
-      # 🏷️ Tagga om som latest
-      - name: Tag as latest
-        run: |
-          docker tag ghcr.io/${{ github.repository }}:pr-${{ github.event.number }} \
-                     ghcr.io/${{ github.repository }}:latest
-
-      # 📦 Push latest
-      - name: Push latest
-        run: docker push ghcr.io/${{ github.repository }}:latest
-
-
-  # 🚀 Deploy – körs när PR går till main eller när main får en push
+  # 🚀 Deploy – körs endast på push till main
   deploy:
-    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
-    needs: tag-latest
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: ci-checks
     defaults:
       run:
         working-directory: ./desktop
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          node-version: 22
 
-      # 🐳 Hämta latest-image
-      - name: Pull Docker image
-        run: docker pull ghcr.io/${{ github.repository }}:latest
+      - name: Install dependencies
+        run: npm ci
 
-      # 📦 Extrahera dist från containern
-      - name: Extract dist from image
-        run: |
-          id=$(docker create ghcr.io/${{ github.repository }}:latest)
-          docker cp $id:/app/dist ./dist
-          docker rm $id
+      - name: Build for deploy
+        run: npm run build
 
-      # 🔐 AWS login
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -126,8 +74,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
 
-      # ☁️ Deploy till S3
-      - name: Deploy to S3
+      - name: Sync to S3
         uses: jakejarvis/s3-sync-action@v0.5.1
         with:
           args: --follow-symlinks --delete
