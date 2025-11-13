@@ -43,7 +43,7 @@ jobs:
         run: npm run build
 
 
-  # 🚀 Deploy – körs endast på push till main
+  # 🚀 Deploy – körs endast på push till main går inte igång med pr alls
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
