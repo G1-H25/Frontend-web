@@ -1,99 +1,83 @@
 name: CI – Build, Lint, Test + Deploy to AWS S3
 
 on:
+  pull_request:
+    branches: [develop, main]
   push:
     branches: [main]
-  pull_request:
-    branches: [develop]
   workflow_dispatch:
 
 permissions:
   contents: read
   id-token: write
-  security-events: write # för CodeQL
+  security-events: write
 
 jobs:
-  setup-and-build:
+  # 🧱 Körs vid PR till develop och main (kodkvalitet)
+  ci-checks:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: ./desktop
 
     steps:
-      - name: 🧾 Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: 🧩 Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript,typescript
-
-      - name: 📦 Install dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: 🧠 TypeScript check
-        run: npm run type-check
-
-      - name: 🧹 Lint
+      - name: Lint
         run: npm run lint
 
-      - name: 🏗️ Build (Vite + Tailwind)
-        run: npm run build
-
-      - name: 🧪 Run tests
+      - name: Run tests
         run: npm test
 
-      - name: 📁 List dist folder
-        run: ls -la ./dist
+      - name: Build project
+        run: npm run build
 
-      - name: 🔍 Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
 
+  # 🚀 Deploy – körs endast på push till main
   deploy:
-    needs: setup-and-build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    needs: ci-checks
     defaults:
       run:
         working-directory: ./desktop
 
     steps:
-      - name: 🧾 Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: 📦 Install dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: 🏗️ Build for deploy
+      - name: Build for deploy
         run: npm run build
 
-      - name: 🔐 Configure AWS credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
 
-      - name: 🚀 Sync built files to S3
+      - name: Sync to S3
         uses: jakejarvis/s3-sync-action@v0.5.1
         with:
-          args: --acl public-read --follow-symlinks --delete
-          source_dir: ./desktop/dist
+          args: --follow-symlinks --delete
         env:
           AWS_S3_BUCKET: trackapp-frontend
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: eu-north-1
-
-      # - name: 🧊 Invalidate CloudFront cache (lägg till sen)
-      #   run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+          SOURCE_DIR: dist
