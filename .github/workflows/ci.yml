@@ -86,4 +86,5 @@ jobs:
           args: --follow-symlinks --delete
         env:
           AWS_S3_BUCKET: trackapp-frontend
-          SOURCE_DIR: dist
+          SOURCE_DIR: desktop/dist
+
