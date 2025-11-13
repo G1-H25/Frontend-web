@@ -1,4 +1,4 @@
-name: CI – Build, Lint, Test + Deploy to AWS S3
+name: CI – Build + Deploy
 
 on:
   pull_request:
@@ -12,20 +12,21 @@ permissions:
   id-token: write
   security-events: write
 
+
 jobs:
-  # 🧱 Körs vid PR till develop och main (kodkvalitet)
-  ci-checks:
+
+  # 🧱 JOBB 1 — Build step (vilket kör beroende på PR-branch)
+  build:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: ./desktop
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -33,39 +34,44 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 👇 Endast PR till develop kör lint + test
       - name: Lint
+        if: github.event_name == 'pull_request' && github.base_ref == 'develop'
         run: npm run lint
 
-      - name: Run tests
+      - name: Tests
+        if: github.event_name == 'pull_request' && github.base_ref == 'develop'
         run: npm test
 
-      - name: Build project
+      # 👇 Alltid build oavsett PR eller push
+      - name: Build
         run: npm run build
 
+    outputs:
+      build-folder: dist
 
-  # 🚀 Deploy – körs endast på push till main
+
+  # 🚀 JOBB 2 — Deploy (körs vid PR till main eller push till main)
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: ci-checks
+    needs: build
+
+    # Deploy-triggers:
+    #  - PR till main
+    #  - push till main
+    if: >
+      (github.event_name == 'pull_request' && github.base_ref == 'main') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
+
     defaults:
       run:
         working-directory: ./desktop
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build for deploy
-        run: npm run build
+      - name: Rebuild (dist included in repo workspace)
+        run: npm ci && npm run build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -74,7 +80,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
 
-      - name: Sync to S3
+      - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@v0.5.1
         with:
           args: --follow-symlinks --delete
