@@ -1,41 +1,19 @@
 @import "tailwindcss";
 
 
-/* @font-face {
-  font-family: 'MyFont';
-  src: url('./assets/fonts/MyFont-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
+@font-face {
+  font-family: 'Figtree';
+  src: url('./assets/fonts/Figtree-VariableFont_wght.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'MyFont';
-  src: url('./assets/fonts/MyFont-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
+  font-family: 'FigtreeItalic';
+  src: url('./assets/fonts/Figtree-Italic-VariableFont_wght.ttf') format('truetype');
 }
 
-@font-face {
-  font-family: 'MyFont';
-  src: url('./assets/fonts/MyFont-Italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
+:root {
+  font-family: Figtree, sans-serif;
 }
-
-@font-face {
-  font-family: 'MyFont';
-  src: url('./assets/fonts/MyFont-BoldItalic.ttf') format('truetype');
-  font-weight: 700;
-  font-style: italic;
-}
-
-@theme {
-  --font-sans: 'MyFont', sans-serif;
-}
-
-body {
-  @apply font-sans;
-} */
 
 @layer components {
   .table-header-row {

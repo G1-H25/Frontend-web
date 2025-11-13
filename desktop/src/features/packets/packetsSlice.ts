@@ -2,53 +2,97 @@ import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit"
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 
+// ✅ API-url för lokal & produktion
 const API_URL =
   import.meta.env.DEV
-    ? "/api"
-    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
+    ? "/api" 
+    : "https://trackapp-api.eu-north-1.elasticbeanstalk.com";
 
-// Typ för API-responsen (rådata innan vi mappar den)
+// Typ för API-responsen
 type RawPacket = {
-  deliveryId?: string | number;
-  routeCode?: string;
-  expectedTempMin?: number;
-  expectedTempMax?: number;
-  currentTemp?: number;
-  tempMinMeasured?: number;
-  tempMaxMeasured?: number;
-  expectedHumidMin?: number;
-  expectedHumidMax?: number;
-  currentHumid?: number;
-  humidMinMeasured?: number;
-  humidMaxMeasured?: number;
-  tempOutOfRange?: number;
-  status?: { text: string; timestamp: string };
-  sender?: string;
-  carrier?: string;
+  id: number | string;
+  sändningsnr: number | string;
+  rutt: string;
+
+  expectedTemp: {
+    name: string;
+    min: number;
+    max: number;
+  };
+
+  currentTemp: number;
+  currentHumidity: number;
+
+  minTempMeasured: number;
+  maxTempMeasured: number;
+  minHumidityMeasured: number;
+  maxHumidityMeasured: number;
+
+  expectedHumidity: {
+    name: string;
+    min: number;
+    max: number;
+  };
+
+  timeOutsideRange: number;
+
+  status: {
+    text: string;
+    timestamp: string;
+  };
+
+  transport: {
+    id: number;
+    name: string;
+  };
+
+  sender: {
+    id: number;
+    name: string;
+  };
 };
 
 // Async thunk för att hämta paket
-export const fetchPackets = createAsyncThunk<RawPacket[]>(
-  "packets/fetchPackets",
-  async () => {
-    const response = await fetch(`${API_URL}/Delivery/retrieve`);
-    if (!response.ok) throw new Error("Failed to fetch packets");
-    const data: RawPacket[] = await response.json();
-    return data;
-  }
-);
+export const fetchPackets = createAsyncThunk<
+  RawPacket[],
+  void,
+  { state: RootState }
+>("packets/fetchPackets", async (_, thunkAPI) => {
+  const state = thunkAPI.getState();
+  const token = state.login.token;
 
+  if (!token) throw new Error("User not authenticated");
+
+  const response = await fetch(`${API_URL}/Delivery/retrieveDeliveries`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      thunkAPI.dispatch({ type: "login/logout" });
+    }
+    throw new Error("Failed to fetch packets");
+  }
+
+  const data: RawPacket[] = await response.json();
+  return data;
+});
+
+// Typ för internt state
 type Status = { text: string; timestamp: string };
 
 type Packet = {
   id: string;
-  rutt: string;
   sändningsnr: string;
-  expectedTemp: { min: number; max: number };
+  rutt: string;
+  expectedTemp: { name: string; min: number; max: number };
   currentTemp: number;
   minTempMeasured: number;
   maxTempMeasured: number;
-  expectedHumidity: { min: number; max: number };
+  expectedHumidity: { name: string; min: number; max: number };
   currentHumidity: number;
   minHumidityMeasured: number;
   maxHumidityMeasured: number;
@@ -84,6 +128,7 @@ const initialState: PacketsState = {
   },
 };
 
+// Slice
 const packetsSlice = createSlice({
   name: "packets",
   initialState,
@@ -118,31 +163,29 @@ const packetsSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchPackets.fulfilled, (state, action) => {
       state.items = action.payload.map((p) => ({
-        id: p.deliveryId?.toString() ?? "",
-        sändningsnr: p.deliveryId?.toString() ?? "",
-        rutt: p.routeCode ?? "",
+        id: p.id.toString(),
+        sändningsnr: p.sändningsnr.toString(),
+        rutt: p.rutt,
         expectedTemp: {
-          min: p.expectedTempMin ?? 0,
-          max: p.expectedTempMax ?? 0,
+          name: p.expectedTemp.name,
+          min: p.expectedTemp.min,
+          max: p.expectedTemp.max,
         },
-        currentTemp: p.currentTemp ?? 0,
-        minTempMeasured: p.tempMinMeasured ?? 0,
-        maxTempMeasured: p.tempMaxMeasured ?? 0,
+        currentTemp: p.currentTemp,
+        minTempMeasured: p.minTempMeasured,
+        maxTempMeasured: p.maxTempMeasured,
         expectedHumidity: {
-          min: p.expectedHumidMin ?? 0,
-          max: p.expectedHumidMax ?? 0,
+          name: p.expectedHumidity.name,
+          min: p.expectedHumidity.min,
+          max: p.expectedHumidity.max,
         },
-        currentHumidity: p.currentHumid ?? 0,
-        minHumidityMeasured: p.humidMinMeasured ?? 0,
-        maxHumidityMeasured: p.humidMaxMeasured ?? 0,
-        timeOutsideRange: p.tempOutOfRange ?? 0,
-        status:
-          p.status ?? {
-            text: "Mottagen",
-            timestamp: new Date().toISOString(),
-          },
-        sender: p.sender ?? "Okänd avsändare",
-        transport: p.carrier ?? "Okänd transport",
+        currentHumidity: p.currentHumidity,
+        minHumidityMeasured: p.minHumidityMeasured,
+        maxHumidityMeasured: p.maxHumidityMeasured,
+        timeOutsideRange: p.timeOutsideRange,
+        status: p.status,
+        sender: p.sender.name,
+        transport: p.transport.name,
       }));
     });
   },
@@ -157,23 +200,16 @@ export const selectSortedPackets = createSelector(
   (items, sortField, sortAsc, filters) => {
     let filtered = [...items];
 
-    if (filters.rutt.length > 0) {
+    if (filters.rutt.length > 0)
       filtered = filtered.filter((p) => filters.rutt.includes(p.rutt));
-    }
-    if (filters.status.length > 0) {
+    if (filters.status.length > 0)
       filtered = filtered.filter((p) => filters.status.includes(p.status.text));
-    }
-    if (filters.sender.length > 0) {
+    if (filters.sender.length > 0)
       filtered = filtered.filter((p) => filters.sender.includes(p.sender));
-    }
-    if (filters.transport.length > 0) {
-      filtered = filtered.filter((p) =>
-        filters.transport.includes(p.transport)
-      );
-    }
-    if (filters.timeOutsideRange) {
+    if (filters.transport.length > 0)
+      filtered = filtered.filter((p) => filters.transport.includes(p.transport));
+    if (filters.timeOutsideRange)
       filtered = filtered.filter((p) => p.timeOutsideRange > 0);
-    }
 
     return filtered.sort((a, b) => {
       const aOut =

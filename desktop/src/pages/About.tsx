@@ -2,11 +2,12 @@ import { Thermometer, Package, Layers } from "lucide-react"
 
 const About = () => {
   return (
+    <div className="p-4 bg-[#D9F2FF] rounded-md">
     <div className="space-y-8 text-white">
       {/* Intro */}
       <div>
         <h1 className="text-3xl font-bold mb-3 text-[#2782E2]">Om oss</h1>
-        <p className="text-lg text-[#D9F2FF]">
+        <p className="text-lg text-[#00072D]">
           Detta är en demoapp för att visa paketstatus. Här kan du se information
           om bilar, chaufförer och leveranser.
         </p>
@@ -17,13 +18,13 @@ const About = () => {
         <h2 className="text-2xl font-semibold mb-4 text-[#2782E2]">
           Skalbar lösning för klimatkontrollerad transport
         </h2>
-        <p className="text-[#D9F2FF] mb-6">Tre nivåer av övervakning:</p>
+        <p className="text-[#00072D] mb-6">Tre nivåer av övervakning:</p>
 
         <div className="grid gap-6 md:grid-cols-3">
           {/* Basnivå */}
-          <div className="bg-[#D9F2FF] text-[#00072D] rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-transform">
+          <div className="bg-[#2782E2] hover:bg-[#5DA8FC] text-white rounded-2xl border border-[#00072D] p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-transform">
             <div className="flex items-center gap-2 mb-4">
-              <Thermometer className="text-[#2782E2]" size={28} />
+              <Thermometer className="text-white" size={28} />
               <h3 className="text-xl font-bold">Basnivå</h3>
             </div>
             <p className="font-semibold mb-2">Fordonsövervakning</p>
@@ -39,7 +40,7 @@ const About = () => {
           </div>
 
           {/* Mellannivå */}
-          <div className="bg-[#2782E2] text-white rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-transform">
+          <div className="bg-[#5DA8FC] hover:bg-[#9ACEFE] text-white rounded-2xl border border-[#00072D] p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-transform">
             <div className="flex items-center gap-2 mb-4">
               <Layers className="text-[#D9F2FF]" size={28} />
               <h3 className="text-xl font-bold">Mellannivå</h3>
@@ -54,10 +55,14 @@ const About = () => {
           </div>
 
           {/* Avancerad nivå */}
-          <div className="bg-[#D01338] text-white rounded-2xl p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-transform">
+          <div className=" bg-[#0F1F55] hover:bg-[#00072D] text-white rounded-2xl border border-[#00072D] p-6 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-transform">
             <div className="flex items-center gap-2 mb-4">
               <Package className="text-[#D9F2FF]" size={28} />
-              <h3 className="text-xl font-bold">Avancerad nivå</h3>
+              <h3 className="text-xl font-bold">
+                <span className="mr-2">Avancerad nivå</span>
+                <span className="mx-2">←</span>
+                <span>vår utgångspunkt</span>
+              </h3>
             </div>
             <p className="font-semibold mb-2">Sensor per paket</p>
             <ul className="list-disc list-inside space-y-1">
@@ -76,10 +81,11 @@ const About = () => {
         <p>
           Med denna modell kan lösningen skalas efter behov:
           <br />– <span className="text-[#2782E2] font-semibold">Billigt och enkelt</span> (nivå 1).
-          <br />– <span className="text-[#2782E2] font-semibold">Flexibelt och representativt</span> (nivå 2).
-          <br />– <span className="text-[#D01338] font-semibold">High-end precision</span> (nivå 3).
+          <br />– <span className="text-[#5DA8FC] font-semibold">Flexibelt och representativt</span> (nivå 2).
+          <br />– <span className="text-[#0F1F55] font-semibold">High-end precision</span> (nivå 3).
         </p>
       </div>
+    </div>
     </div>
   )
 }

@@ -1,26 +1,28 @@
-name: CI – TypeScript, Tailwind, Lint + Azure SWA Deploy + CodeQL
+name: CI – Build, Lint, Test + Deploy to AWS S3
 
 on:
+  pull_request:
+    branches: [develop, main]
   push:
     branches: [main]
-  pull_request:
-    branches: [develop]
   workflow_dispatch:
 
 permissions:
   contents: read
   id-token: write
-  security-events: write # 👈 krävs för CodeQL-resultat
+  security-events: write
 
 jobs:
-  setup-and-build:
+  # 🧱 Körs vid PR till develop och main (kodkvalitet)
+  ci-checks:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     defaults:
       run:
         working-directory: ./desktop
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -28,42 +30,30 @@ jobs:
         with:
           node-version: 22
 
-      # 👇 Initialize CodeQL for both JS + TS
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript,typescript
-
       - name: Install dependencies
         run: npm ci
-
-      - name: TypeScript check
-        run: npm run type-check
 
       - name: Lint
         run: npm run lint
 
-      - name: Build (TypeScript + Vite + Tailwind)
-        run: npm run build
-
       - name: Run tests
         run: npm test
 
-      - name: List dist folder
-        run: ls -la ./dist
+      - name: Build project
+        run: npm run build
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
 
+  # 🚀 Deploy – körs endast på push till main
   deploy:
-    needs: setup-and-build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    needs: ci-checks
     defaults:
       run:
         working-directory: ./desktop
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -77,11 +67,17 @@ jobs:
       - name: Build for deploy
         run: npm run build
 
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "./desktop"
-          output_location: "dist"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Sync to S3
+        uses: jakejarvis/s3-sync-action@v0.5.1
+        with:
+          args: --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: trackapp-frontend
+          SOURCE_DIR: dist

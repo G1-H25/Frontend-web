@@ -21,7 +21,7 @@ const initialState: LoginState = {
 const API_URL =
   import.meta.env.DEV
     ? "/api"
-    : "https://g1api-bgeuc6hydmg9etgt.swedencentral-01.azurewebsites.net";
+    : "https://trackapp-api.eu-north-1.elasticbeanstalk.com";
 
 // Async thunk för login
 export const loginUser = createAsyncThunk(
@@ -31,7 +31,7 @@ export const loginUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await fetch(`${API_URL}/Login`, {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
@@ -39,7 +39,7 @@ export const loginUser = createAsyncThunk(
 
       if (!response.ok) {
         const errorData = await response.json();
-        return rejectWithValue(errorData);
+        return rejectWithValue(errorData.message || "Login failed");
       }
 
       const data = await response.json();

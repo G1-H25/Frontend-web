@@ -12,7 +12,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       dispatch(checkTokenValidity());
-    }, 60_000); // kolla varje minut
+    }, 60000); // kolla varje minut
 
     return () => clearInterval(interval);
   }, [dispatch]);
