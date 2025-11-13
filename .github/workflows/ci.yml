@@ -10,10 +10,11 @@ on:
 permissions:
   contents: read
   id-token: write
+  packages: write
   security-events: write
 
 jobs:
-  # 🧱 Körs vid PR mot develop
+  # 🧱 Bygg, lint, test + bygg Docker-image vid PR till develop
   setup-and-build:
     if: github.base_ref == 'develop'
     runs-on: ubuntu-latest
@@ -22,67 +23,108 @@ jobs:
         working-directory: ./desktop
 
     steps:
-      - name: 🧾 Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: 📦 Install dependencies
-        run: npm ci
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
 
-      - name: 🧠 TypeScript check
-        run: npm run type-check
+      # 🔥 Logga in i GHCR
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🧹 Lint
-        run: npm run lint
+      # 🐳 Bygg Docker-image baserat på PR-nummer
+      - name: Build Docker image
+        run: docker build -t ghcr.io/${{ github.repository }}:pr-${{ github.event.pull_request.number }} .
 
-      - name: 🏗️ Build (Vite + Tailwind)
-        run: npm run build
-
-      - name: 🧪 Run tests
-        run: npm test
+      # 📦 Push image
+      - name: Push Docker image
+        run: docker push ghcr.io/${{ github.repository }}:pr-${{ github.event.pull_request.number }}
 
 
-  # 🚀 Deploy – körs vid push eller PR till main
+  # 🔄 Tagga som latest när PR mergas in i main
+  tag-latest:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ⬇️ Hämta image taggad med PR-numret
+      - name: Pull PR image
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:pr-${{ github.event.number }}
+
+      # 🏷️ Tagga om som latest
+      - name: Tag as latest
+        run: |
+          docker tag ghcr.io/${{ github.repository }}:pr-${{ github.event.number }} \
+                     ghcr.io/${{ github.repository }}:latest
+
+      # 📦 Push latest
+      - name: Push latest
+        run: docker push ghcr.io/${{ github.repository }}:latest
+
+
+  # 🚀 Deploy – körs när PR går till main eller när main får en push
   deploy:
     if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
+    needs: tag-latest
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./desktop
 
     steps:
-      - name: 🧾 Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
-          node-version: 22
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📦 Install dependencies
-        run: npm ci
+      # 🐳 Hämta latest-image
+      - name: Pull Docker image
+        run: docker pull ghcr.io/${{ github.repository }}:latest
 
-      - name: 🏗️ Build for deploy
-        run: npm run build
+      # 📦 Extrahera dist från containern
+      - name: Extract dist from image
+        run: |
+          id=$(docker create ghcr.io/${{ github.repository }}:latest)
+          docker cp $id:/app/dist ./dist
+          docker rm $id
 
-      - name: 🔐 Configure AWS credentials
+      # 🔐 AWS login
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-north-1
 
-      - name: ☁️ Sync built files to S3
+      # ☁️ Deploy till S3
+      - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@v0.5.1
         with:
           args: --follow-symlinks --delete
         env:
           AWS_S3_BUCKET: trackapp-frontend
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: eu-north-1
-          SOURCE_DIR: ./dist
+          SOURCE_DIR: dist
