@@ -1,4 +1,4 @@
-name: CI – TypeScript, Tailwind, Lint + Azure SWA Deploy + CodeQL
+name: CI – Build, Lint, Test + Deploy to AWS S3 + CloudFront
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 permissions:
   contents: read
   id-token: write
-  security-events: write # 👈 krävs för CodeQL-resultat
+  security-events: write # för CodeQL
 
 jobs:
   setup-and-build:
@@ -20,39 +20,38 @@ jobs:
         working-directory: ./desktop
 
     steps:
-      - name: Checkout code
+      - name: 🧾 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # 👇 Initialize CodeQL for both JS + TS
-      - name: Initialize CodeQL
+      - name: 🧩 Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
           languages: javascript,typescript
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: TypeScript check
+      - name: 🧠 TypeScript check
         run: npm run type-check
 
-      - name: Lint
+      - name: 🧹 Lint
         run: npm run lint
 
-      - name: Build (TypeScript + Vite + Tailwind)
+      - name: 🏗️ Build (Vite + Tailwind)
         run: npm run build
 
-      - name: Run tests
+      - name: 🧪 Run tests
         run: npm test
 
-      - name: List dist folder
+      - name: 📁 List dist folder
         run: ls -la ./dist
 
-      - name: Perform CodeQL Analysis
+      - name: 🔍 Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 
   deploy:
@@ -62,26 +61,39 @@ jobs:
     defaults:
       run:
         working-directory: ./desktop
+
     steps:
-      - name: Checkout code
+      - name: 🧾 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Build for deploy
+      - name: 🏗️ Build for deploy
         run: npm run build
 
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "./desktop"
-          output_location: "dist"
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Sync built files to S3
+        uses: jakejarvis/s3-sync-action@v0.5.1
+        with:
+          args: --acl public-read --follow-symlinks --delete ./dist s3://trackapp-frontend
+        env:
+          AWS_S3_BUCKET: trackapp-frontend
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: eu-north-1
+
+
+      # - name: Lägg till sen Invalidate CloudFront cache (optional)
+     
