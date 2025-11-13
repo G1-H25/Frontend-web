@@ -44,7 +44,13 @@ jobs:
 
       # 🐳 Bygg Docker-image baserat på PR-nummer
       - name: Build Docker image
-        run: docker build -t ghcr.io/${{ github.repository }}:pr-${{ github.event.pull_request.number }} .
+        run: |
+          IMAGE_NAME="ghcr.io/${{ github.repository }}:pr-${{ github.event.pull_request.number }}"
+          IMAGE_NAME_LOWER=$(echo "$IMAGE_NAME" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_NAME_LOWER=$IMAGE_NAME_LOWER" >> $GITHUB_ENV
+          docker build -t "$IMAGE_NAME_LOWER" .
+          docker push "$IMAGE_NAME_LOWER"
+
 
       # 📦 Push image
       - name: Push Docker image
