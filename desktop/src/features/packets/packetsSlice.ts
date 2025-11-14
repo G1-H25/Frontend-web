@@ -1,12 +1,7 @@
 import { createSlice, createAsyncThunk, createSelector } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
-
-// ✅ API-url för lokal & produktion
-const API_URL =
-  import.meta.env.DEV
-    ? "/api" 
-    : "http://trackapp-api-env.eba-cjwxp2te.eu-north-1.elasticbeanstalk.com";
+import { API_URL } from "../../config/api";
 
 // Typ för API-responsen
 type RawPacket = {
