@@ -6,25 +6,25 @@ import { parseJwt } from "../utils/jwt";
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  role?: string; // rollen som krävs, t.ex. "Admin"
+  role?: string; // t.ex. "Admin"
 }
 
 const ProtectedRoute = ({ children, role }: ProtectedRouteProps) => {
   const token = useSelector((state: RootState) => state.login.token);
   const user = token ? parseJwt(token) : null;
-  const userRole = user?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-  // Om route kräver en roll och användaren inte har den → redirect
-  if (role && userRole !== role) {
-    return <Navigate to="/" replace />;
-  }
+  const userRole = user?.role ?? null;
 
-  // Om ingen token finns → redirect till login
+  // Om ingen token → redirect till login
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  // Allt OK → rendera barnkomponent
+  // Om route kräver en roll → kontrollera den
+  if (role && userRole !== role) {
+    return <Navigate to="/" replace />;
+  }
+
   return <>{children}</>;
 };
 
