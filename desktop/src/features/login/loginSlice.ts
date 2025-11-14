@@ -21,7 +21,7 @@ const initialState: LoginState = {
 const API_URL =
   import.meta.env.DEV
     ? "/api"
-    : "https://trackapp-api.eu-north-1.elasticbeanstalk.com";
+    : "http://trackapp-api-env.eba-cjwxp2te.eu-north-1.elasticbeanstalk.com";
 
 // Async thunk för login
 export const loginUser = createAsyncThunk(

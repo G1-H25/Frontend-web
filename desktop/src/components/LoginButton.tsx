@@ -51,12 +51,9 @@ const LoginButton = () => {
     navigate("/login");
   };
 
-  const userName =
-    typeof user?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] === "string"
-      ? user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]
-      : null;
+  const userName = user?.username ?? null;
 
-  const role = user?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  const role = user?.role;
 
   // Om man inte är inloggad och är på login-sidan → ta bort knappen
   if (!userName && location.pathname === "/login") {
