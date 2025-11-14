@@ -63,7 +63,7 @@ export const fetchPackets = createAsyncThunk<
 
   if (!token) throw new Error("User not authenticated");
 
-  const response = await fetch(`${API_URL}/Delivery/retrieveDeliveries`, {
+  const response = await fetch(`${API_URL}/orders`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
