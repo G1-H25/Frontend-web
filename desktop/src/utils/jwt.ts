@@ -2,11 +2,13 @@
 import { jwtDecode } from "jwt-decode";
 
 export interface JwtPayload {
-  name?: string;
-  role?: string;
-  userId?: string;
-  [key: string]: unknown; // istället för any
+  sub: number;
+  username: string;
+  role: string;
+  iat?: number;
+  exp?: number;
 }
+
 
 export function parseJwt(token: string): JwtPayload | null {
   if (!token) return null;
